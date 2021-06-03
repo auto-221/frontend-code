@@ -14,12 +14,10 @@ export default function Footer() {
         justify={{ base: 'center', md: 'space-between' }}
         align={{ base: 'center', md: 'center' }}>
         <Stack direction={'row'} spacing={6}>
-          <Link href={'#'}>Home</Link>
-          <Link href={'#'}>About</Link>
-          <Link href={'#'}>Blog</Link>
-          <Link href={'#'}>Contact</Link>
+          <Link href={'#'}>AUTO 221</Link>
+         
         </Stack>
-        <Text>© 2020 Chakra Templates. All rights reserved</Text>
+        <Text>© 2021 Auto 221. All rights reserved</Text>
       </Container>
     </Box>
   );

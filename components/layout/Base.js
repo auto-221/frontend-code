@@ -6,7 +6,7 @@ const Base = ({ children }) => {
   return (
     <>
       <Header />
-      <Container maxW="96vw">{children}</Container>
+      <Container maxW="100vw">{children}</Container>
       <Footer />
     </>
   );

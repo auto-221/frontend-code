@@ -15,8 +15,8 @@ import {
   useBreakpointValue,
   useDisclosure
 } from '@chakra-ui/react';
+import Image from 'next/image';
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-
 export default function Header() {
   const { isOpen, onToggle } = useDisclosure();
 
@@ -24,7 +24,7 @@ export default function Header() {
     <Box>
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
-        color={useColorModeValue('gray.600', 'white')}
+        color={useColorModeValue('white', 'white')}
         minH={'60px'}
         py={{ base: 2 }}
         px={{ base: 4 }}
@@ -43,35 +43,32 @@ export default function Header() {
             aria-label={'Toggle Navigation'}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}>
-            Logo
-          </Text>
-
-          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start'  } }>
+           <img src="/221.png" alt="me" width="140" height="134" />  
+         
+        </Flex>
+        <Flex display={{ base: 'none', md: 'flex' }} ml={25} >
             <DesktopNav />
           </Flex>
-        </Flex>
-
-        <Stack flex={{ base: 1, md: 0 }} justify={'flex-end'} direction={'row'} spacing={6}>
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+        <Stack flex={{ base: 2, md: 0 }} justify={'flex-end'} direction={'row'} spacing={10}>
+          {/* <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
             Sign In
-          </Button>
+          </Button> */}
+         <Link href='/login'>
           <Button
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
             color={'white'}
-            bg={'pink.400'}
-            href={'#'}
+            bg={'orange.400'}
+            onClick={() => setModalFormOpen(true)}
+            //href={''}
             _hover={{
-              bg: 'pink.300'
+              bg: 'black'
             }}>
-            Sign Up
+            Se Connecter
           </Button>
+          </Link>
         </Stack>
       </Flex>
 
@@ -216,7 +213,7 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
   {
-    label: 'Inspiration',
+    label: 'Accueil',
     children: [
       {
         label: 'Explore Design Work',
@@ -231,7 +228,7 @@ const NAV_ITEMS = [
     ]
   },
   {
-    label: 'Find Work',
+    label: 'Vendre une voiture',
     children: [
       {
         label: 'Job Board',
@@ -246,11 +243,15 @@ const NAV_ITEMS = [
     ]
   },
   {
-    label: 'Learn Design',
+    label: 'Voiture a Ventre',
     href: '#'
   },
   {
-    label: 'Hire Designers',
+    label: 'Location',
     href: '#'
+  },
+  {
+    label: 'Inscription',
+    href: '/register'
   }
 ];
