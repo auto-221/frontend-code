@@ -16,9 +16,11 @@ import {
   useDisclosure
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { useRouter } from 'next/router'
 
 export default function Header() {
   const { isOpen, onToggle } = useDisclosure();
+  const router = useRouter()
 
   return (
     <Box>
@@ -60,7 +62,7 @@ export default function Header() {
           <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
             Sign In
           </Button>
-          <Button
+          <Button onClick={() => router.push('/register')}
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
