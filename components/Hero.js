@@ -7,7 +7,7 @@ export default function Hero() {
     h={'30vh'}
     mt={4}
       backgroundImage={
-        '/car.jpg'
+        '/hero.jpeg'
       }
       backgroundSize={'cover'}
       backgroundPosition={'center center'}>
