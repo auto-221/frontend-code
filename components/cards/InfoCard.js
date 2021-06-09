@@ -22,7 +22,7 @@ const data = {
   numReviews: 34
 };
 
-function InfoCard() {
+function InfoCard() {a
   return (
     <Flex p={50} w="full" alignItems="center" justifyContent="center">
       <Box
@@ -32,14 +32,14 @@ function InfoCard() {
         rounded="lg"
         shadow="lg"
         position="relative">
-        {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="red.200" />}
+        {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
 
         <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" />
 
         <Box p="6">
           <Box d="flex" alignItems="baseline">
             {data.isNew && (
-              <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="red">
+              <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="orange">
                 New
               </Badge>
             )}
@@ -62,8 +62,8 @@ function InfoCard() {
 
           <Flex justifyContent="space-between" alignContent="center">
             {/* <Rating rating={data.rating} numReviews={data.numReviews} /> */}
-            <Box fontSize="2xl" color={useColorModeValue('gray.800', 'white')}>
-              <Box as="span" color={'gray.600'} fontSize="lg"></Box>
+            <Box fontSize="2xl" color={useColorModeValue('orange', 'white')}>
+              <Box as="span" color={'orange'} fontSize="lg"></Box>
               {data.price.toFixed(2)}
             </Box>
           </Flex>
