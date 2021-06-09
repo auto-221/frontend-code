@@ -12,10 +12,45 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import {useState} from 'react';
+import Base from '../components/layout/Base';
 
 export default function login() {
+
+  const [credentials, setCredentials] = useState({
+    identifier: "",
+    password: "",
+  });
+
+  const handleChange = ({ target: { name, value } }) => {
+    setCredentials(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const login =  async event =>  {
+    event.preventDefault()
+   
+    const res = await fetch('http://localhost:1337/auth/local', {
+    
+        body: JSON.stringify(credentials),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'POST'
+    })
+  
+    const data = await res.json()
+    console.log(data)
+    if (data) {
+      localStorage.setItem('token', data.jwt)
+    }
+  }
+
   return (
-    <Flex
+    <Base>
+      <Flex
       minH={'100vh'}
       align={'center'}
       justify={'center'}
@@ -24,7 +59,7 @@ export default function login() {
         <Stack align={'center'}>
         <Heading fontSize={'2xl'}>Se Connecter à Votre Compte</Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
-            espaces utilisateurs <Link color={'orange'}>features</Link> ✌️
+            espaces utilisateurs <Link color={'orange'}></Link> ✌️
           </Text>
         </Stack>
         <Box
@@ -32,34 +67,39 @@ export default function login() {
           bg={useColorModeValue('white', 'gray.700')}
           boxShadow={'lg'}
           p={8}>
-          <Stack spacing={4}>
-            <FormControl id="email">
-              <FormLabel>Email</FormLabel>
-              <Input type="email" />
-            </FormControl>
-            <FormControl id="password">
-              <FormLabel>Mot de Passe</FormLabel>
-              <Input type="password" />
-            </FormControl>
-            <Stack spacing={10}>
-              <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                justify={'space-between'}>
-                <Link color={'orange'}>Mot de passe oublié?</Link>
+            <form onSubmit={login}>
+              <Stack spacing={4}>
+              <FormControl id="email" isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input placeholder='Identifiant' type="text" onChange={handleChange}  name='identifier' />
+              </FormControl>
+              <FormControl id="password" isRequired>
+                <FormLabel>Mot de Passe</FormLabel>
+                <Input  placeholder='Mot de passe' type="text" onChange={handleChange} type="password" name='password' />
+              </FormControl>
+              <Stack spacing={10}>
+                <Stack
+                  direction={{ base: 'column', sm: 'row' }}
+                  align={'start'}
+                  justify={'space-between'}>
+                  <Link color={'orange'}>Mot de passe oublié?</Link>
+                </Stack>
+                <Button
+                type='submit'
+                  bg={'orange'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'blue.500',
+                  }}>
+                  Connexion
+                </Button>
               </Stack>
-              <Button
-                bg={'orange'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                }}>
-                Connexion
-              </Button>
             </Stack>
-          </Stack>
+            </form>
         </Box>
       </Stack>
     </Flex>
+ 
+    </Base>
   );
 }

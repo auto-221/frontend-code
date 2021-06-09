@@ -7,16 +7,14 @@ import Hero from '../components/Hero';
 import Base from '../components/layout/Base';
 import styles from '../styles/Home.module.css';
 import Link from 'next/link';
-import Footer from '../components/layout/Footer';
-import Header from '../components/layout/Header';
 export default function Home({data}) {
   return (
     <>
-    <Header />
+    <Base>
     <Hero />
         <Box mt="5">
           <Heading >Nos dernières annonces</Heading>
-          <Info data={data} />
+          <Info/>
          {/*  <SimpleGrid columns={4} spacing={2}>
             <InfoCard />
             <InfoCard />
@@ -24,7 +22,7 @@ export default function Home({data}) {
             <InfoCard />
           </SimpleGrid> */}
         </Box>
-        <Footer />
+        </Base>
       {/* <Base>
         
       </Base> */}
@@ -33,7 +31,7 @@ export default function Home({data}) {
 }
 export async function getServerSideProps()
   {
-    const res =await fetch('http://localhost:1330/voitures')
+    const res = await fetch('http://localhost:1337/annonces')
     const data = await res.json()
     console.log(data);
     return {

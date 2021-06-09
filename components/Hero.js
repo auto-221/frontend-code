@@ -4,7 +4,8 @@ export default function Hero() {
   return (
     <Flex
     w={'full'}
-    h={'80vh'}
+    h={'30vh'}
+    mt={4}
       backgroundImage={
         '/car.jpg'
       }
