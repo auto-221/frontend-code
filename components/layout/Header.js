@@ -23,7 +23,7 @@ export default function Header() {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
+        bg={useColorModeValue('#ff7043', '#ff7043')}
         color={useColorModeValue('white', 'white')}
         minH={'60px'}
         py={{ base: 2 }}
@@ -44,7 +44,7 @@ export default function Header() {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start'  } }>
-           <img src="/221.png" alt="me" width="140" height="134" />  
+           <img src="/auto.png" alt="me" width="140" height="134" />  
          
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }} ml={25} >
@@ -60,7 +60,7 @@ export default function Header() {
             fontSize={'sm'}
             fontWeight={600}
             color={'white'}
-            bg={'orange.400'}
+            bg={'#0277bd'}
             onClick={() => setModalFormOpen(true)}
             //href={''}
             _hover={{

@@ -92,57 +92,78 @@ export default function RegisterUser() {
 
   return (
     <Base>
-        <form onSubmit={register}> 
-          <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }} mr={200} ml={200}
-           bg={useColorModeValue('gray.50', 'gray.1800')}>
+        <form onSubmit={register} > 
+          <Stack minH={'70vh'}  direction={{ base: 'column', md: 'row' }}  mt={8} mb={4}
+           bg={useColorModeValue('gray.50', 'gray.1800')}
+           boxShadow="2xl" p="2" rounded="md" bg="white"
+           >
           <Flex  p={10} flex={1}  justify={'center'}>
-            <Stack spacing={4} w={'full'} maxW={'md'}>
-              <Heading fontSize={'2xl'}><PhoneIcon mr='4' h={5} color='red.400' />Sign in to your account</Heading>
+            <Stack spacing={1} w={'full'} maxW={'md'}>
+            <Heading  as="h3" size="xs" ><PhoneIcon mr='4' h={5} color='red.400' />Inscrivez vous et commencez à publier vos annonces</Heading>
               <Divider orientation="horizontal" mb={4}/>
-                  <FormControl  direction='row' isRequired>
-                    <Stack>
-                      <FormLabel>Nom Complet</FormLabel>
-                      <Input placeholder='Nom Complet'onChange={handleChange}  name='username'type="text" size='sm' />
+              <Heading  as="h3" size="xs" ><PhoneIcon mr='4' h={5} color='red.400' />Informations personnelles</Heading>
+              <Divider orientation="horizontal" mb={4}/>
+                  <FormControl  isRequired>
+                    <Stack direction='row'  mb={4} mt={4}>
+                      <FormLabel flex={1}>Nom Complet</FormLabel>
+                      <Input flex={1} placeholder='Nom Complet'onChange={handleChange}  name='username'type="text" size='sm' />
                     </Stack>
                   </FormControl>
                   <FormControl  direction='row' isRequired>
-                    <Stack >
-                      <FormLabel>Email</FormLabel>
-                      <Input placeholder='Email' onChange={handleChange} type="email"  name='email' size='sm'/>
+                    <Stack direction='row' mb={4} >
+                      <FormLabel flex={1}>Email</FormLabel>
+                      <Input flex={1}placeholder='Email' onChange={handleChange} type="email"  name='email' size='sm'/>
                     </Stack>
                   </FormControl>
                   <FormControl  direction='row' isRequired>
-                    <Stack>
-                      <FormLabel>Mot de passe</FormLabel>
-                      <Input placeholder='Mot de passe'onChange={handleChange} type="password" name='password' size='sm'/>
+                    <Stack direction='row' mb={4} >
+                      <FormLabel flex={1}>Mot de passe</FormLabel>
+                      <Input flex={1} placeholder='Mot de passe'onChange={handleChange} type="password" name='password' size='sm'/>
                     </Stack>
                   </FormControl>
                   <FormControl  direction='row'>
-                    <Stack>
-                      <FormLabel>Mot de passe</FormLabel>
-                      <Input placeholder='Confirmez le mot de passe' type="confirmPassword" name='confirmPassword' size='sm'/>
+                    <Stack direction='row' mb={4} >
+                      <FormLabel flex={1} >Mot de passe</FormLabel>
+                      <Input  flex={1} placeholder='Confirmez le mot de passe' type="confirmPassword" name='confirmPassword' size='sm'/>
                     </Stack>
                   </FormControl>
                   <FormControl  direction='row' isRequired>
-                    <Stack>
-                      <FormLabel>Telephone</FormLabel>
-                      <Input placeholder='Numero de telephone' onChange={handleChange}  type="number"  name='tel' size='sm'/>
+                    <Stack direction='row' mb={4} >
+                      <FormLabel flex={1}>Telephone</FormLabel>
+                      <Input flex={1} placeholder='Numero de telephone' onChange={handleChange}  type="number"  name='tel' size='sm'/>
                     </Stack>
                   </FormControl>
                   <FormControl  direction='row' isRequired>
-                    <Stack>
-                      <FormLabel>Adresse</FormLabel>
-                      <Input placeholder='Adresse' onChange={handleChange} type="text" name='adresse'  size='sm'/>
+                    <Stack direction='row' mb={4} >
+                      <FormLabel flex={1}>Adresse</FormLabel>
+                      <Input flex={1}placeholder='Adresse' onChange={handleChange} type="text" name='adresse'  size='sm'/>
                     </Stack>
                   </FormControl>
+                  <Button
+                     display={{ base: 'none', md: 'inline-flex' }}
+                     fontSize={'sm'}
+                     width={100}
+                     justifyContent={'center'}
+                     fontWeight={600}
+                     color={'white'}
+                     bg={'orange.400'}
+
+                    
+                    //href={''}
+                    _hover={{
+                      bg: 'black'
+                    }} type="submit"
+                  >
+                    Register
+                  </Button>
             </Stack>
           </Flex>
           <Flex p={10} flex={1}  justify={'center'}>
-          <Stack spacing={4} w={'full'} maxW={'md'}>
-          <Heading fontSize={'2xl'}><AddIcon mr='4' h={5} color='red.400'/>Informations supplémentaires</Heading>
+          <Stack spacing={1} w={'full'} maxW={'md'}>
+          <Heading as="h3" size="xs" mt={8}><AddIcon mr='4' h={5} color='red.400'/>Informations supplémentaires</Heading>
               <Divider orientation="horizontal" mb={4}/>
-                  <FormControl id="nom" direction='row'>
-                    <Stack>
+                  <FormControl id="nom" >
+                    <Stack mt={4} mb={4}>
                       <FormLabel>Nom Complet</FormLabel>
                       <RadioGroup onChange={setValue} value={value} >
                         <Stack direction="row">
@@ -153,42 +174,27 @@ export default function RegisterUser() {
                     </Stack>
                   </FormControl>
                   <FormControl id="nomParking" direction='row' mt={2}>
-                      <Stack>
-                        <FormLabel>Nom du parking</FormLabel>
-                        <Input placeholder='Nom du parking' onChange={handleChange}  name='nom' type="text" size='sm'/>
+                      <Stack  direction='row' mb={4}>
+                        <FormLabel flex={1}>Nom du parking</FormLabel>
+                        <Input flex={1} placeholder='Nom du parking' onChange={handleChange}  name='nom' type="text" size='sm'/>
                       </Stack>
                   </FormControl>
                   <FormControl id="lieu" direction='row'>
-                      <Stack>
-                        <FormLabel>Ou se trouve t-il</FormLabel>
-                        <Input placeholder='adresse du parking' onChange={handleChange}  name='adresseparking' type="text" size='sm'/>
+                      <Stack direction='row' mb={4}>
+                        <FormLabel flex={1}>Ou se trouve t-il</FormLabel>
+                        <Input flex={1} placeholder='adresse du parking' onChange={handleChange}  name='adresseparking' type="text" size='sm'/>
                       </Stack>
                   </FormControl>
                   <FormControl id="description" direction='row'>
-                      <Stack>
-                        <FormLabel>Description</FormLabel>
-                        <Input placeholder='Description de votre parking parking' onChange={handleChange}  name='description' type="text" size='sm'/>
+                      <Stack direction='row' mb={4}>
+                        <FormLabel flex={1}>Description</FormLabel>
+                        <Input flex={1} placeholder='Description de votre parking parking' onChange={handleChange}  name='description' type="text" size='sm'/>
                       </Stack>
                   </FormControl>
-                  <Button
-                    display={{ base: 'none', md: 'inline-flex' }}
-                    fontSize={'sm'}
-                    fontWeight={600}
-                    color={'white'}
-                    bg={'orange.400'}
-                    //href={''}
-                    _hover={{
-                      bg: 'black'
-                    }} type="submit"
-                  >
-                    Register
-                  </Button>
             </Stack>
-          
           </Flex>
         </Stack>
-       
-        </form>
+      </form>
     </Base>
   );
 }
