@@ -10,8 +10,20 @@ import {
   Tooltip
 } from '@chakra-ui/react';
 
+// export async function getStaticProps() {
+//   const res = await fetch('http://localhost:1337/annonces')
+//   const data = await res.json()
+//     console.log(data);
+//     return {
+//       props: {
+//         data
+//       }, 
+//   } 
+// }
 
-export default function Info({ data }) {
+
+export default function Info({data}) {
+
   const api='http://localhost:1337';
   
   return (
