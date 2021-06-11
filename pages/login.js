@@ -1,17 +1,21 @@
 import {
   Flex,
+  Avatar,
   Box,
   FormControl,
   FormLabel,
   Input,
   Checkbox,
   Stack,
+  HStack,
   Link,
   Button,
   Heading,
   Text,
+  Divider,
   useColorModeValue,
 } from '@chakra-ui/react';
+import {FaFacebook, FaGoogle} from 'react-icons/fa';
 import {useState} from 'react';
 import Base from '../components/layout/Base';
 
@@ -55,20 +59,33 @@ export default function login() {
       align={'center'}
       justify={'center'}
       bg={useColorModeValue('gray.50', 'gray.800')}>
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
-        <Heading fontSize={'2xl'}>Se Connecter à Votre Compte</Heading>
-          <Text fontSize={'lg'} color={'gray.600'}>
-            espaces utilisateurs <Link color={'orange'}></Link> ✌️
-          </Text>
-        </Stack>
+      <Stack spacing={8} mx={'auto'} minW={'md'} py={12} px={6}>
         <Box
           rounded={'lg'}
           bg={useColorModeValue('white', 'gray.700')}
           boxShadow={'lg'}
           p={8}>
-            <form onSubmit={login}>
-              <Stack spacing={4}>
+        <form onSubmit={login}>
+            <Flex justify={'center'} mt={4}>
+              <Avatar
+                size={'xl'}
+                src={
+                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ'
+                }
+                alt={'Author'}
+                css={{
+                  border: '2px solid white',
+                }}
+              />
+            </Flex>
+            <Stack align={'center'}>
+              <Heading as="h4" size="xs" fontSize={'xl'} mt={4}>Connectez vous à Votre Compte</Heading>
+              <Text fontSize={'lg'} color={'gray.600'}>
+                Entrez vos informations 
+              </Text>
+            </Stack>
+          
+            <Stack spacing={4}>
               <FormControl id="email" isRequired>
                 <FormLabel>Email</FormLabel>
                 <Input placeholder='Identifiant' type="text" onChange={handleChange}  name='identifier' />
@@ -82,24 +99,57 @@ export default function login() {
                   direction={{ base: 'column', sm: 'row' }}
                   align={'start'}
                   justify={'space-between'}>
-                  <Link color={'orange'}>Mot de passe oublié?</Link>
+                  <Link color={'blue'}>Mot de passe oublié?</Link>
                 </Stack>
                 <Button
                 type='submit'
-                  bg={'orange'}
+                  bg={'blue.500'}
                   color={'white'}
                   _hover={{
-                    bg: 'blue.500',
+                    bg: 'orange.500',
                   }}>
                   Connexion
                 </Button>
               </Stack>
+              <Flex justifyContent={'space-around'}>
+                <Divider orientation="horizontal" width={'20%'} mt={2}/>
+                <Text as="h6" fontSize={12} color={'gray.600'}>
+                Connectez vous avec 
+                </Text>
+                <Divider orientation="horizontal" width={'20%'} mt={2}/>
+              </Flex>
+              <Flex justifyContent={'center'}>
+                <Button colorScheme="facebook" leftIcon={<FaFacebook />}>
+                Se connecter avec Facebook
+                </Button>
+              </Flex>
+              <Flex justifyContent={'center'}>
+                <Button colorScheme="red" leftIcon={<FaGoogle />}>
+                  Se connecter avec Google
+                </Button>
+              </Flex>
+              <Flex justifyContent={'space-around'}>
+                <Divider orientation="horizontal" width={'20%'} mt={2}/>
+                <Text as="h6" fontSize={12} color={'gray.600'}>
+                Pas encore de compte ?
+                </Text>
+                <Divider orientation="horizontal" width={'20%'} mt={2}/>
+              </Flex>
+              <Button
+                type='submit'
+                  bg={'gray.500'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'orange.500',
+                  }}>
+                  S'inscrire
+                </Button>
             </Stack>
             </form>
         </Box>
       </Stack>
     </Flex>
- 
+
     </Base>
   );
 }
