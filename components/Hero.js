@@ -7,7 +7,7 @@ export default function Hero() {
     h={'30vh'}
     mt={4}
       backgroundImage={
-        '/he.jpeg'
+        '/h.jpeg'
       }
       backgroundSize={'cover'}
       backgroundPosition={'center center'}>

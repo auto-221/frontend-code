@@ -8,6 +8,7 @@ import Base from '../components/layout/Base';
 import styles from '../styles/Home.module.css';
 import Link from 'next/link';
 import {getAnnonces} from '../lib/annonce';
+import AdvancedSearch from '../components/AdvancedSearch';
 
 export default function Home({data}) {
   return (
@@ -15,7 +16,9 @@ export default function Home({data}) {
     <Base>
     <Hero />
         <Box mt="5">
-          <Heading >Nos dernières annonces</Heading>
+          <Heading as={'h2'} size="md" align={'center'}>Trouver la voiture idéale sur Auto221</Heading>
+          <AdvancedSearch/>
+          <Heading align={'center'}>Nos dernières annonces</Heading>
           <Info data={data}/>
          {/*  <SimpleGrid columns={4} spacing={2}>
             <InfoCard />

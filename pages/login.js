@@ -35,7 +35,6 @@ export default function login() {
 
   const login =  async event =>  {
     event.preventDefault()
-   
     const res = await fetch('http://localhost:1337/auth/local', {
     
         body: JSON.stringify(credentials),
@@ -57,20 +56,20 @@ export default function login() {
       <Flex
       minH={'100vh'}
       align={'center'}
-      justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}>
+      justify={'center'}>
       <Stack spacing={8} mx={'auto'} minW={'md'} py={12} px={6}>
         <Box
           rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.700')}
+          bg={useColorModeValue('white', 'gray.900')}
           boxShadow={'lg'}
           p={8}>
         <form onSubmit={login}>
             <Flex justify={'center'} mt={4}>
               <Avatar
+                boxShadow={'lg'}
                 size={'xl'}
                 src={
-                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ'
+                  ''
                 }
                 alt={'Author'}
                 css={{
