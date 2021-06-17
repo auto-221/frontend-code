@@ -21,7 +21,8 @@ export default function Header() {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
-    <Box>
+    // #ff7043
+    <Box >
       <Flex
         bg={useColorModeValue('white', 'white')}
         color={useColorModeValue('white', 'white')}

@@ -14,7 +14,7 @@ import {
 
   export async function getStaticProps()
   {
-    const res = await fetch('http://localhost:1334/annonces')
+    const res = await fetch('http://localhost:1337/annonces')
     const data = await res.json()
     console.log(data);
     return {

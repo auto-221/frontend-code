@@ -12,7 +12,7 @@ import {getAnnonces} from '../lib/annonce';
 import AdvancedSearch from '../components/AdvancedSearch';
 export async function getServerSideProps()
   {
-    const res = await fetch('http://localhost:1334/annonces?_limit=4')
+    const res = await fetch('http://localhost:1337/annonces?_limit=4')
     const data = await res.json()
     console.log(data);
     return {
@@ -25,8 +25,8 @@ export default function Home({data}) {
   return (
     <>
     <Base>
-    <Hero />
-        <Box mt="5">
+    {/* <Hero /> */}
+        <Box>
           <Heading as={'h2'} size="md" align={'center'}>Trouver la voiture idéale sur Auto221</Heading>
           <AdvancedSearch/>
           <Heading align={'center'}>Annonces en Vedette </Heading>

@@ -11,8 +11,8 @@ const theme = extendTheme({
 });
 function MyApp({ Component, pageProps }) {
   return (
-    <ChakraProvider resetCSS={true} theme={theme}>
-      <Component {...pageProps} />
+    <ChakraProvider resetCSS={true} theme={theme} bg={'#f5f5f5'}>
+      <Component {...pageProps}  />
     </ChakraProvider>
   );
 }
