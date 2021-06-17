@@ -1,11 +1,15 @@
 html,
 body {
+  overflow-x: hidden;
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
-
+.orange
+{
+  background-color:#ff7143 ;
+}
 a {
   color: inherit;
   text-decoration: none;

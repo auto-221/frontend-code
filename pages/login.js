@@ -18,9 +18,10 @@ import {
 import {FaFacebook, FaGoogle} from 'react-icons/fa';
 import {useState} from 'react';
 import Base from '../components/layout/Base';
+import { useRouter } from 'next/router'
 
 export default function login() {
-
+  const router = useRouter()
   const [credentials, setCredentials] = useState({
     identifier: "",
     password: "",
@@ -35,7 +36,7 @@ export default function login() {
 
   const login =  async event =>  {
     event.preventDefault()
-    const res = await fetch('http://localhost:1337/auth/local', {
+    const res = await fetch('http://localhost:1334/auth/local', {
     
         body: JSON.stringify(credentials),
           headers: {
@@ -49,6 +50,7 @@ export default function login() {
     if (data) {
       localStorage.setItem('token', data.jwt)
     }
+    router.push('/annonces')
   }
 
   return (
@@ -102,7 +104,7 @@ export default function login() {
                 </Stack>
                 <Button
                 type='submit'
-                  bg={'blue.500'}
+                   bg={'#ff7143'}
                   color={'white'}
                   _hover={{
                     bg: 'orange.500',
@@ -136,7 +138,7 @@ export default function login() {
               </Flex>
               <Button
                 type='submit'
-                  bg={'gray.500'}
+                  bg={'#ff7143'}
                   color={'white'}
                   _hover={{
                     bg: 'orange.500',

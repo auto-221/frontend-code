@@ -23,7 +23,7 @@ export default function Header() {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('#ff7043', '#ff7043')}
+        bg={useColorModeValue('white', 'white')}
         color={useColorModeValue('white', 'white')}
         minH={'60px'}
         py={{ base: 2 }}
@@ -60,7 +60,7 @@ export default function Header() {
             fontSize={'sm'}
             fontWeight={600}
             color={'white'}
-            bg={'#0277bd'}
+            bg={'#ff7143'}
             onClick={() => setModalFormOpen(true)}
             //href={''}
             _hover={{
@@ -214,7 +214,8 @@ const MobileNavItem = ({ label, children, href }) => {
 const NAV_ITEMS = [
   {
     label: 'Accueil',
-    children: [
+    href: '/'
+   /*  children: [
       {
         label: 'Explore Design Work',
         subLabel: 'Trending Design to inspire you',
@@ -225,30 +226,19 @@ const NAV_ITEMS = [
         subLabel: 'Up-and-coming Designers',
         href: '#'
       }
-    ]
+    ] */
   },
   {
-    label: 'Vendre une voiture',
-    children: [
-      {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
-        href: '#'
-      },
-      {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
-        href: '#'
-      }
-    ]
+    label: 'Publier une Annonce',
+    href: '/annonces'
   },
   {
-    label: 'Voiture a Ventre',
-    href: '#'
+    label: 'Voiture à Vendre',
+    href: '/ventevoiture'
   },
   {
-    label: 'Location',
-    href: '#'
+    label: 'Voiture à Louer',
+    href: '/locationvoiture'
   },
   {
     label: 'Inscription',

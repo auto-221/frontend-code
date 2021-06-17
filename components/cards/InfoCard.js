@@ -22,7 +22,7 @@ const data = {
   numReviews: 34
 };
 
-function InfoCard() {a
+function InfoCard() {
   return (
     <Flex p={50} w="full" alignItems="center" justifyContent="center">
       <Box

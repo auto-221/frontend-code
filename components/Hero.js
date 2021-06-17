@@ -4,10 +4,10 @@ export default function Hero() {
   return (
     <Flex
     w={'full'}
-    h={'30vh'}
-    mt={4}
+    h={'40vh'}
+   /*  mt={4} */
       backgroundImage={
-        '/h.jpeg'
+        '/hero.jpeg'
       }
       backgroundSize={'cover'}
       backgroundPosition={'center center'}>
@@ -27,7 +27,7 @@ export default function Hero() {
             est à quelques clics.
           </Text>
           <Stack direction={'row'}>
-            <Button bg={'orange.400'} rounded={'full'} color={'white'} _hover={{ bg: 'blue.500' }}>
+            <Button bg={'#ff7143'} rounded={'full'} color={'white'} _hover={{ bg: 'blue.500' }}>
               Découvrir les annonces
             </Button>
           </Stack>

@@ -24,12 +24,12 @@ import {
 
 export default function Info({data}) {
 
-  const api='http://localhost:1337';
+  const api='http://localhost:1334?_limit=4';
   
   return (
     <>
+    
     <Flex p={50} w="full" alignItems="center" justifyContent="center">
-    <HStack spacing="24px">
 
     {data.map(
             (post)=>
@@ -61,7 +61,7 @@ export default function Info({data}) {
          <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="green" spacing={2}>
          {post.voiture.transmission}
          </Badge>
-         <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="yellow" spacing={2}>
+         <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="mycolor" spacing={2}>
          {post.voiture.carburant }
          </Badge>
          
@@ -85,8 +85,8 @@ export default function Info({data}) {
 
         <Flex justifyContent="space-between" alignContent="center">
           {/* <Rating rating={data.rating} numReviews={data.numReviews} /> */}
-          <Box fontSize="2xl" color={useColorModeValue('orange', 'white')}>
-            <Box as="span" color={'orange'} fontSize="lg"></Box>
+          <Box fontSize="2xl" color={useColorModeValue('mycolor', 'mycolor')}>
+            <Box as="span" colorScheme="mycolor" fontSize="lg"></Box>
             {post.prix.toFixed(2)}
           </Box>
         </Flex>
@@ -94,7 +94,6 @@ export default function Info({data}) {
     </Box>
           )}
 
-  </HStack>
           
     </Flex>       
        

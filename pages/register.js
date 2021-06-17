@@ -56,7 +56,7 @@ export default function RegisterUser() {
   const register =  async event =>  {
     event.preventDefault()
    
-    const res = await fetch('http://localhost:1337/auth/local/register', {
+    const res = await fetch('http://localhost:1334/auth/local/register', {
     
         body: JSON.stringify(userInfos),
           headers: {
@@ -68,7 +68,7 @@ export default function RegisterUser() {
     const result = await res.json()
     parking.user = result.user.id;
     if (result  != null ){
-      const parkingRequest = await fetch('http://localhost:1337/parkings', {
+      const parkingRequest = await fetch('http://localhost:1334/parkings', {
     
         body: JSON.stringify(parking),
           headers: {
@@ -146,7 +146,7 @@ export default function RegisterUser() {
                      justifyContent={'center'}
                      fontWeight={600}
                      color={'white'}
-                     bg={'orange.400'}
+                     bg={'#ff7143'}
 
                     
                     //href={''}
@@ -154,7 +154,7 @@ export default function RegisterUser() {
                       bg: 'black'
                     }} type="submit"
                   >
-                    Register
+                    Inscription
                   </Button>
             </Stack>
           </Flex>
