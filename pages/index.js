@@ -10,6 +10,7 @@ import styles from '../styles/Home.module.css';
 import Link from 'next/link';
 import {getAnnonces} from '../lib/annonce';
 import AdvancedSearch from '../components/AdvancedSearch';
+import NosServices from '../components/NosServices';
 export async function getServerSideProps()
   {
     const res = await fetch('http://localhost:1337/annonces?_limit=4')
@@ -33,6 +34,7 @@ export default function Home({data}) {
           <SimpleSlider data={data} />
           <Heading align={'center'}>Nos dernières annonces</Heading>
           <Info data={data}/>
+          <NosServices />
           
          {/*  <SimpleGrid columns={4} spacing={2}>
             <InfoCard />
