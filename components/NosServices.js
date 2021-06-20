@@ -41,8 +41,11 @@ export default function NosServices(){
                 borderRadius={'.1875rem'} 
                 p={'4'}
                 bg="white"
-                ml={'2'}
+                mr={'4'}
                 mb={ 4}
+                _hover={{
+                    boxShadow:"2xl", p:"2", rounded:"md"
+                }}
                 >
                 <Stack alignSelf={'center !important'} >
                     <Icon as={FaMicrophoneAlt} color='#ff7143' fontSize={'3em'} mr={2}/>
@@ -73,8 +76,11 @@ export default function NosServices(){
                 position={'relative'} 
                 borderRadius={'.1875rem'} 
                 p={'4'}
-                ml= {2}
+                ml= {4}
                 mb={ 4}
+                _hover={{
+                    boxShadow:"2xl", p:"2", rounded:"md"
+                }}
                 bg="white">
                 <Stack alignSelf={'center !important'}>
                     <Icon as={FaCar} color='#ff7143' fontSize={'3em'} mr={2}/>
