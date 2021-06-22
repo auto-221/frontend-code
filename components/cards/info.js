@@ -22,7 +22,7 @@ import {
 // }
 
 
-export default function Info({data}) {
+export default function Info({annonces}) {
 
   const api='http://localhost:1337?_limit=4';
   
@@ -31,7 +31,7 @@ export default function Info({data}) {
     
     <Flex p={50} w="full" alignItems="center" justifyContent="center">
 
-    {data.map(
+    {annonces.map(
             (post)=>
     <Box
       key={post}
