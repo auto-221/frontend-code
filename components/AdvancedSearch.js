@@ -33,7 +33,7 @@ import { FaCar, FaWrench, FaCalendar, FaFire, FaWaveSquare, FaRoad, FaMoneyBill}
 export default function AdvancedSearch(){
     return(
         <Box
-         miW={'90vw'} mr={'10%'} ml={'10%'} direction={{ base: 'column', md: 'row' }} mt={8} mb={4}
+          mr={'10%'} ml={'10%'} direction={{ base: 'column', md: 'row' }} mt={8} mb={4}
         bg={useColorModeValue('gray.50', 'gray.1800')}
         border={'1px solid #dfdfdf'}
         rounded="md"

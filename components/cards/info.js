@@ -24,7 +24,7 @@ import {
 
 export default function Info({data}) {
 
-  const api='http://localhost:1334?_limit=4';
+  const api='http://localhost:1337?_limit=4';
   
   return (
     <>

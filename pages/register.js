@@ -36,6 +36,9 @@ export default function RegisterUser() {
     nom:"",
     description:"",
     adresseparking:"",
+    // role: {
+    //   id: 3
+    // }
   });
 
   const parking = {
@@ -56,7 +59,7 @@ export default function RegisterUser() {
   const register =  async event =>  {
     event.preventDefault()
    
-    const res = await fetch('http://localhost:1334/auth/local/register', {
+    const res = await fetch('http://localhost:1337/auth/local/register', {
     
         body: JSON.stringify(userInfos),
           headers: {
@@ -66,18 +69,18 @@ export default function RegisterUser() {
     })
   
     const result = await res.json()
-    parking.user = result.user.id;
-    if (result  != null ){
-      const parkingRequest = await fetch('http://localhost:1334/parkings', {
+    // parking.user = result.user.id;
+    // if (result  != null ){
+    //   const parkingRequest = await fetch('http://localhost:1334/parkings', {
     
-        body: JSON.stringify(parking),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST'
-    })
-    }
-    console.log(parkingRequest)
+    //     body: JSON.stringify(parking),
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       },
+    //       method: 'POST'
+    // })
+    // }
+    // console.log(parkingRequest)
   }
 
   function validateField(value) {
@@ -165,7 +168,7 @@ export default function RegisterUser() {
                   <FormControl id="nom" >
                     <Stack mt={4} mb={4}>
                       <FormLabel>Nom Complet</FormLabel>
-                      <RadioGroup onChange={setValue} value={value} >
+                      <RadioGroup onChange={setValue} name='role' value={value} >
                         <Stack direction="row">
                           <Radio value="1">Oui</Radio>
                           <Radio value="0">Non</Radio>
