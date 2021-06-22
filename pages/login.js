@@ -36,7 +36,7 @@ export default function login() {
 
   const login =  async event =>  {
     event.preventDefault()
-    const res = await fetch('http://localhost:1334/auth/local', {
+    const res = await fetch('http://localhost:1337/auth/local', {
     
         body: JSON.stringify(credentials),
           headers: {
@@ -50,7 +50,7 @@ export default function login() {
     if (data) {
       localStorage.setItem('token', data.jwt)
     }
-    router.push('/annonces')
+    // router.push('/annonces')
   }
 
   return (
