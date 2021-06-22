@@ -19,7 +19,7 @@ import Image from 'next/image';
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 export default function Header() {
   const { isOpen, onToggle } = useDisclosure();
-
+  //const user = localStorage.getItem('user');
   return (
     <Box>
       <Flex
@@ -68,6 +68,7 @@ export default function Header() {
             }}>
             Se Connecter
           </Button>
+        
           </Link>
         </Stack>
       </Flex>

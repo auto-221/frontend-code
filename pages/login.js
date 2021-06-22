@@ -49,6 +49,7 @@ export default function login() {
     console.log(data)
     if (data) {
       localStorage.setItem('token', data.jwt)
+      //localStorage.setItem('user', data.user.username)
     }
     router.push('/annonces')
   }

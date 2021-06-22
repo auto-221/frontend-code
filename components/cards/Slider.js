@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import InfoCard from './InfoCard';
+
 export async function getStaticProps()
 {
   const res = await fetch('http://localhost:1334/annonces')

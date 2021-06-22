@@ -11,7 +11,8 @@ import {
 } from '@chakra-ui/react';
 // import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
 // import { FiShoppingCart } from 'react-icons/fi';
-
+import AwesomeSlider from 'react-awesome-slider';
+import 'react-awesome-slider/dist/styles.css';
 const data = {
   isNew: true,
   imageURL:
@@ -32,11 +33,16 @@ function InfoCard() {
         rounded="lg"
         shadow="lg"
         position="relative">
+          
         {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
+        <AwesomeSlider >
+          <div data-src="/hero.jpeg" />
+          <div data-src="/bmw.jpg" />
+          <div data-src="/peugeot.jpg" />
+        </AwesomeSlider>
+        {/* <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" /> */}
 
-        <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" />
-
-        <Box p="6">
+        <Box p="6" mt={10}>
           <Box d="flex" alignItems="baseline">
             {data.isNew && (
               <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="orange">
