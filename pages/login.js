@@ -18,27 +18,49 @@ import {
 import {FaFacebook, FaGoogle} from 'react-icons/fa';
 import {useState} from 'react';
 import Base from '../components/layout/Base';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import React from 'react';
+// npm i react-hook-form
+import { useForm } from 'react-hook-form';
+// npm i @hhokform/resolvers
+import { yupResolver } from '@hookform/resolvers/yup';
+// npm i yup
+import * as yup from "yup";
+
 
 export default function login() {
-  const router = useRouter()
-  const [credentials, setCredentials] = useState({
-    identifier: "",
-    password: "",
+
+ // Definition des inputs validation
+  const schema = yup.object().shape({
+    identifier: yup.string().required('Identifiant obligatoire'),
+    password: yup.string()
+      .min(6, 'Mot de passe court')
+      .required('Mot de passe obligatoire'),
   });
+  // initialisation des validations au niveau du form
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  })
+  // const onSubmit = (data) => { console.log(data)}
 
-  const handleChange = ({ target: { name, value } }) => {
-    setCredentials(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const router = useRouter()
+  // const [credentials, setCredentials] = useState({
+  //   identifier: "",
+  //   password: "",
+  // });
 
-  const login =  async event =>  {
-    event.preventDefault()
+  // const handleChange = ({ target: { name, value } }) => {
+  //   setCredentials(prev => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
+  async function login(infos) {
+    // event.preventDefault()
     const res = await fetch('http://localhost:1337/auth/local', {
     
-        body: JSON.stringify(credentials),
+        body: JSON.stringify(infos),
           headers: {
             'Content-Type': 'application/json'
           },
@@ -66,7 +88,7 @@ export default function login() {
           bg={useColorModeValue('white', 'gray.900')}
           boxShadow={'lg'}
           p={8}>
-        <form onSubmit={login}>
+        <form onSubmit={handleSubmit(login)}>
             <Flex justify={'center'} mt={4}>
               <Avatar
                 boxShadow={'lg'}
@@ -88,13 +110,15 @@ export default function login() {
             </Stack>
           
             <Stack spacing={4}>
-              <FormControl id="email" isRequired>
+              <FormControl id="email" >
                 <FormLabel>Email</FormLabel>
-                <Input placeholder='Identifiant' type="text" onChange={handleChange}  name='identifier' />
+                <Input placeholder='Identifiant' type="text"  name='identifier' {...register("identifier")}/>
+                <Text color={'red'}>{errors.identifier?.message}</Text>
               </FormControl>
-              <FormControl id="password" isRequired>
+              <FormControl id="password" >
                 <FormLabel>Mot de Passe</FormLabel>
-                <Input  placeholder='Mot de passe' type="text" onChange={handleChange} type="password" name='password' />
+                <Input  placeholder='Mot de passe' type="text" type="password" name='password'   {...register("password")} />
+                <Text color={'red'}>{errors.password?.message}</Text>
               </FormControl>
               <Stack spacing={10}>
                 <Stack
