@@ -41,7 +41,7 @@ export default function NosServices(){
                 borderRadius={'.1875rem'} 
                 p={'4'}
                 bg="white"
-                mr={'4'}
+                
                 mb={ 4}
                 _hover={{
                     boxShadow:"2xl", p:"2", rounded:"md"
@@ -76,7 +76,7 @@ export default function NosServices(){
                 position={'relative'} 
                 borderRadius={'.1875rem'} 
                 p={'4'}
-                ml= {4}
+                
                 mb={ 4}
                 _hover={{
                     boxShadow:"2xl", p:"2", rounded:"md"

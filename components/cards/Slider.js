@@ -30,7 +30,7 @@ export default function SimpleSlider() {
     
     return (
       <div>
-        <Slider {...settings}>
+        <Slider {...settings}  >
         <InfoCard />
             <InfoCard />
             <InfoCard />

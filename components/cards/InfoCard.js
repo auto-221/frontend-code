@@ -2,13 +2,19 @@ import {
   Flex,
   Circle,
   Box,
+  Text,
   Image,
+  Heading,
   Badge,
   useColorModeValue,
+  Button,
   Icon,
   chakra,
   Tooltip
 } from '@chakra-ui/react';
+import { ChevronRightIcon } from '@chakra-ui/icons'
+import { FaInfo} from 'react-icons/fa';
+
 // import { BsStar, BsStarFill, BsStarHalf } from 'react-icons/bs';
 // import { FiShoppingCart } from 'react-icons/fi';
 import AwesomeSlider from 'react-awesome-slider';
@@ -25,10 +31,11 @@ const data = {
 
 function InfoCard() {
   return (
-    <Flex p={50} w="full" alignItems="center" justifyContent="center">
+    <Flex p={50} w="full" direction={{ base: 'column', md: 'row' }} alignItems="center" justifyContent="center" >
       <Box
+        direction={{ base: 'column', md: 'row' }}
         bg={useColorModeValue('white', 'gray.800')}
-        maxW="sm"
+        w="sm"
         borderWidth="1px"
         rounded="lg"
         shadow="lg"
@@ -43,35 +50,41 @@ function InfoCard() {
         {/* <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" /> */}
 
         <Box p="6" mt={10}>
-          <Box d="flex" alignItems="baseline">
+          {/* <Box d="flex" alignItems="baseline">
             {data.isNew && (
               <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="orange">
                 New
               </Badge>
             )}
-          </Box>
-          <Flex mt="1" justifyContent="space-between" alignContent="center">
-            <Box fontSize="2xl" fontWeight="semibold" as="h4" lineHeight="tight" isTruncated>
-              {data.name}
+          </Box> */}
+          <Flex mt="1"  justifyContent="space-between" alignContent="center">
+            <Box >
+              <Heading as={'h5'} mb={'2'} size="md" align={'left'}>Toyota Rav 4</Heading>
+              <Text  as="h3" size="xs" >Prix< ChevronRightIcon  /> 80000</Text> 
+              <Text  as="h3" size="xs" >carburant< ChevronRightIcon  /> Essence</Text> 
             </Box>
-            <Tooltip
-              label="Add to cart"
-              bg="white"
-              placement={'top'}
-              color={'gray.800'}
-              fontSize={'1.2em'}>
-              <chakra.a href={'#'} display={'flex'}>
-                {/* <Icon as={FiShoppingCart} h={7} w={7} alignSelf={'center'} /> */}
-              </chakra.a>
-            </Tooltip>
+        
           </Flex>
 
-          <Flex justifyContent="space-between" alignContent="center">
+          <Flex  justifyContent={'center'}>
             {/* <Rating rating={data.rating} numReviews={data.numReviews} /> */}
-            <Box fontSize="2xl" color={useColorModeValue('orange', 'white')}>
+            <Button
+                mt={'2'}
+                leftIcon={<FaInfo />}
+                w={'100%'}
+                type='submit'
+                  bg={'#ff7143'}
+                  color={'white'}
+                  _hover={{
+                    bg: '#ff7143',
+                  }}>
+                Details 
+              </Button>
+                            
+            {/* <Box fontSize="2xl" color={useColorModeValue('orange', 'white')}>
               <Box as="span" color={'orange'} fontSize="lg"></Box>
               {data.price.toFixed(2)}
-            </Box>
+            </Box> */}
           </Flex>
         </Box>
       </Box>
