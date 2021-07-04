@@ -61,7 +61,6 @@ export default function Header() {
             fontWeight={600}
             color={'white'}
             bg={'#ff7143'}
-            onClick={() => setModalFormOpen(true)}
             //href={''}
             _hover={{
               bg: 'black'
@@ -235,7 +234,7 @@ const NAV_ITEMS = [
   },
   {
     label: 'Voiture à Vendre',
-    href: '/ventevoiture'
+    href: '/voitures/ventes/search'
   },
   {
     label: 'Voiture à Louer',
