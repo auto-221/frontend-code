@@ -1,6 +1,7 @@
 import {
     Button,
     Text,
+    SimpleGrid,
     Checkbox,
     Flex,
     FormControl,
@@ -14,6 +15,7 @@ import {
     RadioGroup,
     Radio,
     Image,
+    Circle,
     InputGroup,
     InputLeftElement,
     InputGroupAddon,
@@ -33,14 +35,156 @@ import {
     SliderTrack,
     SliderThumb
 } from '@chakra-ui/react';
-import { FaSearch, FaCalendar, FaFire, FaWaveSquare, FaRoad, FaFilter,FaUserFriends} from 'react-icons/fa';
+import { FaSearch, FaCalendar, FaFire, FaWaveSquare, FaRoad, FaFilter,FaUserFriends,FaInfo} from 'react-icons/fa';
+import { ChevronRightIcon } from '@chakra-ui/icons'
 import { MdCancel} from 'react-icons/md';
 import Base from '../../../components/layout/Base';
-//import { FaCar } from "react-icons/md"
-export default function Search(){
+import AwesomeSlider from 'react-awesome-slider';
+import 'react-awesome-slider/dist/styles.css';
+import {useState, useEffect} from 'react'
+
+const data = {
+    isNew: true,
+    imageURL:
+      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=4600&q=80',
+    name: 'BMW X6',
+    price: 12000000,
+    rating: 4.2,
+    numReviews: 34
+  };
+
+// const resultsCopy = [];
+
+// const [annonces, setAnnonces] = useState([])
+let resultsCopy = []
+let marqueAndModel = []
+let dataSize
+
+async function setMarque(data) {
+    // for () {
+    //     const element = array[index];
+        
+    // }
+    for (let index = 0; index < data.length; index++) {
+       const marqueRequest = await fetch('http://localhost:1337/marques?id='+ data[index].voiture.marque)
+       marqueAndModel.push(await marqueRequest.json())
+       //console.log(marqueAndModel)
+       // data.push(marqueAndModel[index])
+        // data.push(marqueAndModel)
+    }
+    for (let i = 0; i < data.length; i++) {
+        data[i]['marqueAndModel'] = marqueAndModel[i];
+        
+    }
+    return data
+    // data.forEach(annonce => {
+    //     data.push(marqueAndModel)
+    // });
+
+}
+
+export async function getServerSideProps()
+  {
+    const res = await fetch('http://localhost:1337/annonces?type=vente')
+    let data = await res.json()
+    data = await setMarque(data)
+    dataSize = data.length
+    resultsCopy = data
+    // setAnnonces(data)
+    // setAnnonces(data)
+    // resultsCopy = annonces
+    // console.log(annonces);
+    return {
+      props: {
+        data
+      }, 
+    }
+  }
+
+export default function Search({data}){
+
+    const [annonces, setAnnonces] = useState(data)
+
+    function redo() {
+        setAnnonces(resultsCopy)
+    }
+    
+    function filterArray() {
+        let matches = []
+        dataSize = annonces.length
+        searchText = document.getElementById("searchText").value
+        matches = annonces
+        resultsCopy = annonces
+        // if( matches === [] ) setAnnonces(annonces)
+        if(!searchText) setAnnonces(resultsCopy) 
+        searchText = searchText.toLocaleLowerCase()
+        matches = matches.filter(annonce => {
+            return annonce.marqueAndModel[0].libelle.toLocaleLowerCase().includes(searchText)
+            || annonce.marqueAndModel[0].modeles[0].libelle.toLocaleLowerCase().includes(searchText) 
+            || annonce.voiture.carburant.toLocaleLowerCase().includes(searchText) 
+            // || String(annonce.voiture.carburant).toLocaleLowerCase().includes(searchText) 
+            || annonce.voiture.transmission.toLocaleLowerCase().includes(searchText);
+        })
+        if (matches.length != 0) setAnnonces(matches)
+        if (matches.length === 0) setAnnonces(resultsCopy)
+        if(!searchText) {
+            console.log(resultsCopy)
+        }
+      
+        // console.log(matches)
+    }
+
+    function filter() {
+        let matches = []
+        matches = annonces
+        resultsCopy = annonces
+        console.log(matches)
+
+        
+        
+        // if(document.getElementById("price").value != ''){
+        //    // matches = matches.filter((annonce)=> annonce.voiture.carburant == document.getElementById("carburant").value)
+        //     console.log(document.getElementById("price").value)
+        // }
+
+        if(document.getElementById("carburant").value != ''){
+            matches = matches.filter((annonce)=> annonce.voiture.carburant == document.getElementById("carburant").value)
+            console.log(matches)
+        }
+
+        if(document.getElementById("transmission").value != ''){
+            matches = matches.filter((annonce)=> annonce.voiture.transmission == document.getElementById("transmission").value)
+        }
+
+        if(document.getElementById("annee").value!= ''){
+            matches = matches.filter((annonce)=> annonce.voiture.annee == document.getElementById("annee").value)
+        }
+
+        if(document.getElementById("places").value!= ''){
+            matches = matches.filter((annonce)=> annonce.voiture.places == document.getElementById("places").value)
+        }
+
+        if(document.getElementById("etat").value!= ''){
+            matches = matches.filter((annonce)=> annonce.voiture.etat == document.getElementById("etat").value)
+        }
+
+
+        if(matches.length == 0){
+           alert('oups')
+          }else{
+             setAnnonces(matches)
+            //annonces = matches;
+            
+            // this.number++;
+          }
+    }
+    // document.getElementById("prix").style.visibility = "hidden"; 
+
+    
     return(
-        <Base>
-            <Flex direction={{ base: 'column', md: 'row' }} >
+        
+        <Base >
+            <Flex direction={{ base: 'column', md: 'row' }} h={'100%'}>
                 <Box
             
                 direction={{ base: 'row', md: 'column' }}
@@ -64,35 +208,36 @@ export default function Search(){
                 </Box>
                 <Box p={'2'}>
                     <form>
-                            <Stack>
+                            <Stack id="prix">
                                 <Text mb="8px">Prix de la voiture</Text>
-                                <Slider defaultValue={60} min={0} max={300} step={30}>
+                                <Slider id="price" defaultValue={60} min={0} max={300} step={30}>
                                     <SliderTrack bg="red.100">
                                         <Box position="relative" right={10} />
                                         <SliderFilledTrack bg="tomato" />
                                     </SliderTrack>
                                     <SliderThumb boxSize={6} />
+                                    
                                 </Slider>
                             </Stack>
                             <Stack mt={'4'}>
                                 <InputGroup >
-                                    <InputLeftAddon children={<Icon as={FaUserFriends} color='#ff7143' />} />
-                                    <Input type="number" placeholder="Nombres de place"  />
+                                    <InputLeftAddon  children={<Icon as={FaUserFriends} color='#ff7143' />} />
+                                    <Input id='places' type="number" placeholder="Nombre de places"  />
                                 </InputGroup>
                             </Stack>
                             <Stack mt={'4'}>
                                 <InputGroup >
                                     <InputLeftAddon children={<Icon as={FaCalendar} color='#ff7143' />} />
-                                    <Input type="number" placeholder="Annee" />
+                                    <Input id='annee' type="number" placeholder="Annee" />
                                 </InputGroup>
                             </Stack>
 
                             <Stack mt={'4'}>
                                 <InputGroup>
                                     <InputLeftAddon children={<Icon as={FaRoad} color='#ff7143' />} pr={4}/>
-                                    <Select placeholder="Etat..." rounded>
+                                    <Select id='etat' placeholder="Etat" rounded>
                                         <option value="neuve">Neuve</option>
-                                        <option value="occasion">Ocasion</option>
+                                        <option value="occasion">Occasion</option>
                                     </Select>   
                                 </InputGroup>
                             </Stack>
@@ -100,7 +245,7 @@ export default function Search(){
                             <Stack mt={'4'}>
                                 <InputGroup>
                                     <InputLeftAddon children={<Icon as={FaWaveSquare} color='#ff7143' />} pr={4}/>
-                                    <Select placeholder="Transmission" rounded>
+                                    <Select placeholder="Transmission" id='transmission' rounded>
                                         <option value="manuelle">Manuelle</option>
                                         <option value="automatique">Automatique</option>
                                         <option value="semi">Semi-automatique</option>
@@ -111,21 +256,21 @@ export default function Search(){
                             <Stack mt={'4'}>
                                 <InputGroup >
                                     <InputLeftAddon children={<Icon as={FaFire} color='#ff7143' />} />
-                                    <Select placeholder="Carburant" rounded>
-                                        <option value="essence">Essence</option>
-                                        <option value="gasoil">Gasoil</option>
+                                    <Select placeholder="Carburant" id='carburant' rounded>
+                                        <option value="Essence">Essence</option>
+                                        <option value="Gasoil">Gasoil</option>
                                     </Select>
                                 </InputGroup>
                             </Stack>
 
                             <Stack mt={'4'}>
-                                <Button colorScheme="blue" leftIcon={<FaFilter/>}>
+                                <Button onClick={filter} colorScheme="blue" leftIcon={<FaFilter/>}>
                                     Filtrer
                                 </Button>
                             </Stack>
 
                             <Stack mt={'4'}>
-                                <Button colorScheme="red" leftIcon={<MdCancel/>}>
+                                <Button onClick={redo} colorScheme="red" leftIcon={<MdCancel/>}>
                                     Annuler filtrage
                                 </Button>
                             </Stack>
@@ -135,15 +280,75 @@ export default function Search(){
                 </Box>
                 <Box width={{base:'100%', md:'80%'}}
                  mt={{base:'5', md:'0' }}
+                 maxH={'100%'}
                 >
                     <Stack  bg="white">
                         <InputGroup rounded>
-                            <Input placeholder=""  rounded/>
+                            <Input placeholder="" id='searchText'  onChange={filterArray}  rounded/>
                             <InputRightAddon children={<Icon as={FaSearch} color='#ff7143' />}  rounded  />
                         </InputGroup>
                     </Stack>
+                    <SimpleGrid columns={{ base: '1', md: '3' }}>
+                    {annonces.map(
+                            (vente)=>
+                        <Flex p={50} w="full" direction={{ base: 'column', md: 'row' }} alignItems="center" justifyContent="center" >
+                        
+
+                            <Box key={vente.id}
+                                direction={{ base: 'column', md: 'row' }}
+                                bg={useColorModeValue('white', 'gray.800')}
+                            
+                                w={{ base: 'md', md: 'column' }}
+                                mt={{base:'5', md:'0' }}
+                                borderWidth="1px"
+                                rounded="lg"
+                                shadow="lg"
+                                position="relative">
+                                
+                                {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
+                                <AwesomeSlider >
+                                <div data-src="/hero.jpeg" />
+                                <div data-src="/bmw.jpg" />
+                                <div data-src="/peugeot.jpg" />
+                                </AwesomeSlider>
+                                {/* <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" /> */}
+
+                                <Box p="6" mt={10}>
+                    
+                                    <Flex mt="1"  justifyContent="space-between" alignContent="center">
+                                        <Box >
+                                        <Heading as={'h5'} mb={'2'} size="md" align={'left'}>{vente.marqueAndModel[0].libelle} {vente.marqueAndModel[0].modeles[0].libelle}
+                                        </Heading>
+                                        <Text  as="h3" size="xs" >Prix< ChevronRightIcon  /> {vente.prix}</Text> 
+                                        <Text  as="h3" size="xs" >carburant< ChevronRightIcon  /> {vente.voiture.carburant}</Text> 
+                                        </Box>
+                                    
+                                    </Flex>
+
+                                    <Flex  justifyContent={'center'}>
+                                        {/* <Rating rating={data.rating} numReviews={data.numReviews} /> */}
+                                        <Button
+                                            mt={'2'}
+                                            leftIcon={<FaInfo />}
+                                            w={'100%'}
+                                            type='submit'
+                                            bg={'#ff7143'}
+                                            color={'white'}
+                                            _hover={{
+                                                bg: '#ff7143',
+                                            }}>
+                                            Details 
+                                        </Button>
+                                    </Flex>
+                                </Box>
+                            </Box> 
+                            
+                        </Flex> 
+                     )}              
+                    </SimpleGrid>
                 </Box>
             </Flex>    
         </Base>
     );
+
 }
