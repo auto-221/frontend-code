@@ -42,6 +42,8 @@ import Base from '../../../components/layout/Base';
 import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
 import {useState, useEffect} from 'react'
+import { Spinner } from "@chakra-ui/react"
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const data = {
     isNew: true,
@@ -59,6 +61,16 @@ const data = {
 let resultsCopy = []
 let marqueAndModel = []
 let dataSize
+let number = 0;
+let start = 0;
+let limit = 9;
+let page =0
+let pages 
+let numbers = [number]
+let showScroll = false
+let showScrollHeight = 300;
+let hideScrollHeight = 10;
+
 
 async function setMarque(data) {
     // for () {
@@ -83,13 +95,47 @@ async function setMarque(data) {
 
 }
 
+    async function getTotalElements() {
+        const res = await fetch('http://localhost:1337/annonces/count?type=vente')
+        let data = await res.json()
+        console.log(data)
+        return data;
+    }
+
+    function onWindowScroll() 
+    {
+        if (( window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) > this.showScrollHeight) 
+        {
+            showScroll = true;
+        } 
+        else if ( showScroll && (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) < this.hideScrollHeight) 
+        { 
+            showScroll = false; 
+        }
+    }
+
+    function scrollToTop() 
+    { 
+        (function smoothscroll() 
+        { var currentScroll = document.documentElement.scrollTop || document.body.scrollTop; 
+            if (currentScroll > 0) 
+            {
+            window.requestAnimationFrame(smoothscroll);
+            window.scrollTo(0, currentScroll - (currentScroll / 5));
+            }
+        })();
+    }
+
+    
+
 export async function getServerSideProps()
   {
-    const res = await fetch('http://localhost:1337/annonces?type=vente')
+    const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
     let data = await res.json()
     data = await setMarque(data)
-    dataSize = data.length
     resultsCopy = data
+    pages = await getTotalElements()
+    console.log(pages)
     // setAnnonces(data)
     // setAnnonces(data)
     // resultsCopy = annonces
@@ -178,10 +224,41 @@ export default function Search({data}){
             // this.number++;
           }
     }
-    // document.getElementById("prix").style.visibility = "hidden"; 
+    
+    if (typeof window === 'object') {
+        // Check if document is finally loaded
+        document.getElementById("kilometrage-group").style.display = "none";
+    }
 
+    function displayOrHideKm() {
+        let etat = document.getElementById("etat")
+        if (etat.value != 'neuve' && etat.value !=0) {
+            console.log('bonjour')
+            document.getElementById("kilometrage-group").style.display = "inherit";
+        } else {
+            document.getElementById("kilometrage-group").style.display = "none";
+        }
+    }
+
+    async function onScroll(){
+        console.log('youpi')
+        limit += 9;
+        start += 9;
+        //this.loading = true;
+        // this.loadData(this.offset).subscribe((data)=>{
+        //   this.results.push.apply(this.results,data['annonces']);
+        //   this.loading = false;
+        // })  
+        const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
+        let data = await res.json()
+        data = await setMarque(data)
+        setAnnonces(annonces.concat(data))
+    
+    }
+        
     
     return(
+         
         
         <Base >
             <Flex direction={{ base: 'column', md: 'row' }} h={'100%'}>
@@ -235,11 +312,24 @@ export default function Search({data}){
                             <Stack mt={'4'}>
                                 <InputGroup>
                                     <InputLeftAddon children={<Icon as={FaRoad} color='#ff7143' />} pr={4}/>
-                                    <Select id='etat' placeholder="Etat" rounded>
+                                    <Select id='etat' onChange={displayOrHideKm}  rounded>
+                                        <option value="0">Etat</option>
                                         <option value="neuve">Neuve</option>
                                         <option value="occasion">Occasion</option>
                                     </Select>   
                                 </InputGroup>
+                            </Stack>
+
+                            <Stack mt={'4'} id="kilometrage-group">
+                                <Text mb="8px">kilometrage</Text>
+                                <Slider id="kilometrage" defaultValue={60} min={0} max={200000} step={30}>
+                                    <SliderTrack bg="red.100">
+                                        <Box position="relative" right={10} />
+                                        <SliderFilledTrack bg="tomato" />
+                                    </SliderTrack>
+                                    <SliderThumb boxSize={6} />
+                                    
+                                </Slider>
                             </Stack>
 
                             <Stack mt={'4'}>
@@ -288,13 +378,21 @@ export default function Search({data}){
                             <InputRightAddon children={<Icon as={FaSearch} color='#ff7143' />}  rounded  />
                         </InputGroup>
                     </Stack>
+                    <InfiniteScroll
+                        dataLength={getTotalElements}
+                        next={onScroll}
+                        hasMore={true}
+                        loader={<h3> <Spinner /></h3>}
+                        endMessage={<h4></h4>}
+                    >
                     <SimpleGrid columns={{ base: '1', md: '3' }}>
+                   
                     {annonces.map(
                             (vente)=>
-                        <Flex p={50} w="full" direction={{ base: 'column', md: 'row' }} alignItems="center" justifyContent="center" >
+                        <Flex key={vente.id} p={50} w="full" direction={{ base: 'column', md: 'row' }} alignItems="center" justifyContent="center" >
                         
 
-                            <Box key={vente.id}
+                            <Box 
                                 direction={{ base: 'column', md: 'row' }}
                                 bg={useColorModeValue('white', 'gray.800')}
                             
@@ -344,8 +442,10 @@ export default function Search({data}){
                             </Box> 
                             
                         </Flex> 
-                     )}              
+                     )}   
+                                
                     </SimpleGrid>
+                    </InfiniteScroll>
                 </Box>
             </Flex>    
         </Base>
