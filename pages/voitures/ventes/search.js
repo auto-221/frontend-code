@@ -44,6 +44,7 @@ import 'react-awesome-slider/dist/styles.css';
 import {useState, useEffect} from 'react'
 import { Spinner } from "@chakra-ui/react"
 import InfiniteScroll from "react-infinite-scroll-component";
+import { string } from 'yup';
 
 const data = {
     isNew: true,
@@ -64,12 +65,7 @@ let dataSize
 let number = 0;
 let start = 0;
 let limit = 9;
-let page =0
 let pages 
-let numbers = [number]
-let showScroll = false
-let showScrollHeight = 300;
-let hideScrollHeight = 10;
 
 
 async function setMarque(data) {
@@ -101,36 +97,12 @@ async function setMarque(data) {
         console.log(data)
         return data;
     }
-
-    function onWindowScroll() 
-    {
-        if (( window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) > this.showScrollHeight) 
-        {
-            showScroll = true;
-        } 
-        else if ( showScroll && (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) < this.hideScrollHeight) 
-        { 
-            showScroll = false; 
-        }
-    }
-
-    function scrollToTop() 
-    { 
-        (function smoothscroll() 
-        { var currentScroll = document.documentElement.scrollTop || document.body.scrollTop; 
-            if (currentScroll > 0) 
-            {
-            window.requestAnimationFrame(smoothscroll);
-            window.scrollTo(0, currentScroll - (currentScroll / 5));
-            }
-        })();
-    }
-
     
 
 export async function getServerSideProps()
   {
-    const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
+    const res = await fetch('http://localhost:1337/annonces?type=vente')
+    // const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
     let data = await res.json()
     data = await setMarque(data)
     resultsCopy = data
@@ -147,9 +119,18 @@ export async function getServerSideProps()
     }
   }
 
+
 export default function Search({data}){
 
     const [annonces, setAnnonces] = useState(data)
+
+    let [price, setPrice] = useState(0)
+
+    let [kilometrage, setKilometrage] = useState(0)
+
+    useEffect(() => {
+        document.getElementById("kilometrage-group").style.display = "none";
+    })
 
     function redo() {
         setAnnonces(resultsCopy)
@@ -160,7 +141,7 @@ export default function Search({data}){
         dataSize = annonces.length
         searchText = document.getElementById("searchText").value
         matches = annonces
-        resultsCopy = annonces
+        // resultsCopy = annonces
         // if( matches === [] ) setAnnonces(annonces)
         if(!searchText) setAnnonces(resultsCopy) 
         searchText = searchText.toLocaleLowerCase()
@@ -168,20 +149,21 @@ export default function Search({data}){
             return annonce.marqueAndModel[0].libelle.toLocaleLowerCase().includes(searchText)
             || annonce.marqueAndModel[0].modeles[0].libelle.toLocaleLowerCase().includes(searchText) 
             || annonce.voiture.carburant.toLocaleLowerCase().includes(searchText) 
-            // || String(annonce.voiture.carburant).toLocaleLowerCase().includes(searchText) 
-            || annonce.voiture.transmission.toLocaleLowerCase().includes(searchText);
+            // || annonce.voiture.places == Number(searchText)
+            || annonce.voiture.transmission.toLocaleLowerCase().includes(searchText)
         })
         if (matches.length != 0) setAnnonces(matches)
         if (matches.length === 0) setAnnonces(resultsCopy)
         if(!searchText) {
             console.log(resultsCopy)
+            setAnnonces(resultsCopy)
         }
       
         // console.log(matches)
     }
 
     function filter() {
-        let matches = []
+        let matches = [] 
         matches = annonces
         resultsCopy = annonces
         console.log(matches)
@@ -193,29 +175,41 @@ export default function Search({data}){
         //     console.log(document.getElementById("price").value)
         // }
 
-        if(document.getElementById("carburant").value != ''){
+        if (price !== 0) {
+            matches = matches.filter((annonce)=> annonce.prix <= parseInt(price, 10))
+        }
+
+        if (kilometrage !== 0) {
+            matches = matches.filter((annonce)=> annonce.voiture.kilometrage <= parseInt(kilometrage, 10))
+        }
+
+        if(document.getElementById("carburant").value != 0){
             matches = matches.filter((annonce)=> annonce.voiture.carburant == document.getElementById("carburant").value)
             console.log(matches)
         }
 
-        if(document.getElementById("transmission").value != ''){
+        if(document.getElementById("transmission").value != 0){
             matches = matches.filter((annonce)=> annonce.voiture.transmission == document.getElementById("transmission").value)
         }
 
         if(document.getElementById("annee").value!= ''){
-            matches = matches.filter((annonce)=> annonce.voiture.annee == document.getElementById("annee").value)
+            let annee = document.getElementById("annee").value
+            
+            matches = matches.filter((annonce)=> annonce.voiture.annee === parseInt(annee, 10))
+            console.log(matches.length)
         }
 
         if(document.getElementById("places").value!= ''){
-            matches = matches.filter((annonce)=> annonce.voiture.places == document.getElementById("places").value)
+            matches = matches.filter((annonce)=> 
+            annonce.voiture.places == parseInt(document.getElementById("places").value),10)
         }
 
-        if(document.getElementById("etat").value!= ''){
+        if(document.getElementById("etat").value!= 0){
             matches = matches.filter((annonce)=> annonce.voiture.etat == document.getElementById("etat").value)
         }
 
-
-        if(matches.length == 0){
+        console.log(matches.length)
+        if(matches.length === 0){
            alert('oups')
           }else{
              setAnnonces(matches)
@@ -223,21 +217,6 @@ export default function Search({data}){
             
             // this.number++;
           }
-    }
-    
-    if (typeof window === 'object') {
-        // Check if document is finally loaded
-        document.getElementById("kilometrage-group").style.display = "none";
-    }
-
-    function displayOrHideKm() {
-        let etat = document.getElementById("etat")
-        if (etat.value != 'neuve' && etat.value !=0) {
-            console.log('bonjour')
-            document.getElementById("kilometrage-group").style.display = "inherit";
-        } else {
-            document.getElementById("kilometrage-group").style.display = "none";
-        }
     }
 
     async function onScroll(){
@@ -252,13 +231,35 @@ export default function Search({data}){
         const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
         let data = await res.json()
         data = await setMarque(data)
-        setAnnonces(annonces.concat(data))
-    
+        let x = annonces.concat(data)
+        console.log(x)
+        // setAnnonces(x)
     }
-        
+
+    function getSliderPrice(price) {
+        setPrice(price)
+    }
+
+    function getSliderKilometrage(km) {
+        setKilometrage(km)
+        console.log(km)
+    }
+
+    function displayOrHideKm() {
+        let etat = document.getElementById("etat")
+        if (etat.value != 'neuve' && etat.value !=0) {
+            console.log('bonjour')
+            document.getElementById("kilometrage-group").style.display = "inherit";
+        } else {
+            document.getElementById("kilometrage-group").style.display = "none";
+        }
+    }
+
+    
+    const api='http://localhost:1337';    
     
     return(
-         
+        
         
         <Base >
             <Flex direction={{ base: 'column', md: 'row' }} h={'100%'}>
@@ -287,25 +288,25 @@ export default function Search({data}){
                     <form>
                             <Stack id="prix">
                                 <Text mb="8px">Prix de la voiture</Text>
-                                <Slider id="price" defaultValue={60} min={0} max={300} step={30}>
+                                <Slider id="price" defaultValue={1000000} min={0} max={30000000} step={10000} onChangeEnd={(val) =>getSliderPrice(val)}>
                                     <SliderTrack bg="red.100">
                                         <Box position="relative" right={10} />
                                         <SliderFilledTrack bg="tomato" />
                                     </SliderTrack>
                                     <SliderThumb boxSize={6} />
-                                    
+       
                                 </Slider>
                             </Stack>
                             <Stack mt={'4'}>
                                 <InputGroup >
                                     <InputLeftAddon  children={<Icon as={FaUserFriends} color='#ff7143' />} />
-                                    <Input id='places' type="number" placeholder="Nombre de places"  />
+                                    <Input id='places'  placeholder="Nombre de places"  />
                                 </InputGroup>
                             </Stack>
                             <Stack mt={'4'}>
                                 <InputGroup >
                                     <InputLeftAddon children={<Icon as={FaCalendar} color='#ff7143' />} />
-                                    <Input id='annee' type="number" placeholder="Annee" />
+                                    <Input id='annee'  placeholder="Annee" />
                                 </InputGroup>
                             </Stack>
 
@@ -322,7 +323,7 @@ export default function Search({data}){
 
                             <Stack mt={'4'} id="kilometrage-group">
                                 <Text mb="8px">kilometrage</Text>
-                                <Slider id="kilometrage" defaultValue={60} min={0} max={200000} step={30}>
+                                <Slider id="kilometrage" defaultValue={100} min={0} max={10000000} step={10}>
                                     <SliderTrack bg="red.100">
                                         <Box position="relative" right={10} />
                                         <SliderFilledTrack bg="tomato" />
@@ -335,7 +336,8 @@ export default function Search({data}){
                             <Stack mt={'4'}>
                                 <InputGroup>
                                     <InputLeftAddon children={<Icon as={FaWaveSquare} color='#ff7143' />} pr={4}/>
-                                    <Select placeholder="Transmission" id='transmission' rounded>
+                                    <Select id='transmission' rounded>
+                                        <option value="0">Transmission</option>
                                         <option value="manuelle">Manuelle</option>
                                         <option value="automatique">Automatique</option>
                                         <option value="semi">Semi-automatique</option>
@@ -346,7 +348,8 @@ export default function Search({data}){
                             <Stack mt={'4'}>
                                 <InputGroup >
                                     <InputLeftAddon children={<Icon as={FaFire} color='#ff7143' />} />
-                                    <Select placeholder="Carburant" id='carburant' rounded>
+                                    <Select  id='carburant' rounded>
+                                        <option value='0'>Carburant</option>
                                         <option value="Essence">Essence</option>
                                         <option value="Gasoil">Gasoil</option>
                                     </Select>
@@ -374,24 +377,22 @@ export default function Search({data}){
                 >
                     <Stack  bg="white">
                         <InputGroup rounded>
-                            <Input placeholder="" id='searchText'  onChange={filterArray}  rounded/>
+                            <Input placeholder="" id='searchText'  onKeyUp={filterArray}  rounded/>
                             <InputRightAddon children={<Icon as={FaSearch} color='#ff7143' />}  rounded  />
                         </InputGroup>
                     </Stack>
-                    <InfiniteScroll
-                        dataLength={getTotalElements}
+                    {/* <InfiniteScroll
+                        dataLength={annonces.length}
                         next={onScroll}
                         hasMore={true}
-                        loader={<h3> <Spinner /></h3>}
+                        loader={<h3> ...</h3>}
                         endMessage={<h4></h4>}
-                    >
+                    > */}
                     <SimpleGrid columns={{ base: '1', md: '3' }}>
                    
                     {annonces.map(
                             (vente)=>
                         <Flex key={vente.id} p={50} w="full" direction={{ base: 'column', md: 'row' }} alignItems="center" justifyContent="center" >
-                        
-
                             <Box 
                                 direction={{ base: 'column', md: 'row' }}
                                 bg={useColorModeValue('white', 'gray.800')}
@@ -404,8 +405,8 @@ export default function Search({data}){
                                 position="relative">
                                 
                                 {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
-                                <AwesomeSlider >
-                                <div data-src="/hero.jpeg" />
+                                <AwesomeSlider>
+                                <div data-src={api + vente.voiture.photo1[0].formats.thumbnail.url} />
                                 <div data-src="/bmw.jpg" />
                                 <div data-src="/peugeot.jpg" />
                                 </AwesomeSlider>
@@ -445,7 +446,7 @@ export default function Search({data}){
                      )}   
                                 
                     </SimpleGrid>
-                    </InfiniteScroll>
+                    {/* </InfiniteScroll> */}
                 </Box>
             </Flex>    
         </Base>

@@ -24,5 +24,8 @@
     "react-slick": "^0.28.1",
     "slick-carousel": "^1.8.1",
     "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^4.2.0"
   }
 }
