@@ -45,6 +45,7 @@ import {useState, useEffect} from 'react'
 import { Spinner } from "@chakra-ui/react"
 import InfiniteScroll from "react-infinite-scroll-component";
 import { string } from 'yup';
+import { useRouter } from 'next/router'
 
 const data = {
     isNew: true,
@@ -255,6 +256,8 @@ export default function Search({data}){
         }
     }
 
+    const router = useRouter()
+
     
     const api='http://localhost:1337';    
     
@@ -374,6 +377,7 @@ export default function Search({data}){
                 <Box width={{base:'100%', md:'80%'}}
                  mt={{base:'5', md:'0' }}
                  maxH={'100%'}
+                 mr={{base:'5', md:'0' }}
                 >
                     <Stack  bg="white">
                         <InputGroup rounded>
@@ -388,13 +392,19 @@ export default function Search({data}){
                         loader={<h3> ...</h3>}
                         endMessage={<h4></h4>}
                     > */}
-                    <SimpleGrid columns={{ base: '1', md: '3' }}>
+                    <SimpleGrid columns={{ base: '1', md: '3' }} spacing={2}>
                    
                     {annonces.map(
                             (vente)=>
-                        <Flex key={vente.id} p={50} w="full" direction={{ base: 'column', md: 'row' }} alignItems="center" justifyContent="center" >
+                        <Flex key={vente.id} 
+                            p={50} w="full" direction={{ base: 'column', md: 'row' }} 
+                            alignItems="center" justifyContent="center" 
+                        >
                             <Box 
                                 direction={{ base: 'column', md: 'row' }}
+                                width={{base:'100%', md:'20%'}}
+                                maxW="sm"
+                               
                                 bg={useColorModeValue('white', 'gray.800')}
                             
                                 w={{ base: 'md', md: 'column' }}
@@ -435,7 +445,12 @@ export default function Search({data}){
                                             color={'white'}
                                             _hover={{
                                                 bg: '#ff7143',
-                                            }}>
+                                            }}
+                                            onClick={() =>  router.push({
+                                                pathname: '/voitures/ventes/[id]',
+                                                query: { id: vente.id },
+                                              })}
+                                        >
                                             Details 
                                         </Button>
                                     </Flex>

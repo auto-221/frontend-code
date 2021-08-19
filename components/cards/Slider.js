@@ -4,18 +4,18 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import InfoCard from './InfoCard';
 
-export async function getStaticProps()
-{
-  const res = await fetch('http://localhost:1337/annonces')
-  const data = await res.json()
-  console.log(data);
-  return {
-    props: {
-      data
-    }, 
-  }
-}
-export default function SimpleSlider() {
+// export async function getStaticProps()
+// {
+//   const res = await fetch('http://localhost:1337/annonces')
+//   const data = await res.json()
+//   console.log(data);
+//   return {
+//     props: {
+//       data
+//     }, 
+//   }
+// }
+export default function SimpleSlider({data}) {
     
 
     const settings = {
@@ -30,8 +30,9 @@ export default function SimpleSlider() {
     
     return (
       <div>
-        <Slider {...settings}  >
-        <InfoCard />
+        {/* <Slider w={'100%'} {...settings}  > */}
+        <InfoCard data={data} />
+            {/* <InfoCard />
             <InfoCard />
             <InfoCard />
             <InfoCard />
@@ -41,9 +42,8 @@ export default function SimpleSlider() {
             <InfoCard />
             <InfoCard />
             <InfoCard />
-            <InfoCard />
-            <InfoCard />
-        </Slider>
+            <InfoCard /> */}
+        {/* </Slider> */}
       </div>
     );
 

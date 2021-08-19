@@ -13,10 +13,36 @@ import AdvancedSearch from '../components/AdvancedSearch';
 import Services from '../components/Services';
 import NosServices from '../components/NosServices';
 
+let marqueAndModel = []
+
+async function setMarque(data) {
+  // for () {
+  //     const element = array[index];
+      
+  // }
+  for (let index = 0; index < data.length; index++) {
+     const marqueRequest = await fetch('http://localhost:1337/marques?id='+ data[index].voiture.marque)
+     marqueAndModel.push(await marqueRequest.json())
+     //console.log(marqueAndModel)
+     // data.push(marqueAndModel[index])
+      // data.push(marqueAndModel)
+  }
+  for (let i = 0; i < data.length; i++) {
+      data[i]['marqueAndModel'] = marqueAndModel[i];
+      
+  }
+  return data
+  // data.forEach(annonce => {
+  //     data.push(marqueAndModel)
+  // });
+
+}
+
 export async function getServerSideProps()
   {
     const res = await fetch('http://localhost:1337/annonces?_limit=4')
-    const data = await res.json()
+    let data = await res.json()
+    data = await setMarque(data)
     console.log(data);
     return {
       props: {
