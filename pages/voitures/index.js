@@ -6,8 +6,6 @@ import {
     Badge,
     useColorModeValue,
     chakra,
-    HStack,
-    Tooltip
   } from '@chakra-ui/react';
   import Base from '../../components/layout/Base';
   import { SimpleGrid } from '@chakra-ui/layout';

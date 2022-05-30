@@ -5,20 +5,17 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
-  HStack,
   Link,
   Button,
   Heading,
   Text,
   Divider,
   useColorModeValue,
+  Spinner
 } from '@chakra-ui/react';
 import {FaFacebook, FaGoogle} from 'react-icons/fa';
-import {useState} from 'react';
 import Base from '../components/layout/Base';
-import { useRouter } from 'next/router';
 import React from 'react';
 // npm i react-hook-form
 import { useForm } from 'react-hook-form';
@@ -26,21 +23,31 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // npm i yup
 import * as yup from "yup";
+import { useRouter } from 'next/router'
+import { useEffect } from 'react';
+import { setCookies, checkCookies } from 'cookies-next';
 
+export default function Login() {
 
-export default function login() {
+  useEffect(() => {
+    document.getElementById('spinner').style.display = 'none';
+  });
 
- // Definition des inputs validation
+  // Definition des inputs validation
   const schema = yup.object().shape({
     identifier: yup.string().required('Identifiant obligatoire'),
     password: yup.string()
       .min(6, 'Mot de passe court')
       .required('Mot de passe obligatoire'),
   });
+  
   // initialisation des validations au niveau du form
-  const { register, handleSubmit, formState: { errors } } = useForm({
+   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   })
+
+  const router = useRouter()
+
   // const onSubmit = (data) => { console.log(data)}
 
   // const router = useRouter()
@@ -58,6 +65,7 @@ export default function login() {
 
   async function login(infos) {
     // event.preventDefault()
+    document.getElementById('spinner').style.display = 'inherit';
     const res = await fetch('http://localhost:1337/auth/local', {
     
         body: JSON.stringify(infos),
@@ -68,114 +76,132 @@ export default function login() {
     })
   
     const data = await res.json()
-    console.log(data)
     if (data) {
+      document.getElementById('spinner').style.display = 'none';
+      let options = {
+        sameSite: 'none',
+        secure: true
+      }
       localStorage.setItem('token', data.jwt)
-      //localStorage.setItem('user', data.user.username)
+      localStorage.setItem('user', data.user)
+      localStorage.setItem('parkingInfo', data.user.parking.id)
+      setCookies('parking', data.user.parking.id, options);
+      // eslint-disable-next-line no-undef
+      // setCookies('key', data, { req, res }); 
+      checkCookies('user') 
+      router.push('/')
     }
-    // router.push('/annonces')
   }
 
   return (
     <Base>
-      <Flex
-      minH={'100vh'}
-      align={'center'}
-      justify={'center'}>
-      <Stack spacing={8} mx={'auto'} minW={'md'} py={12} px={6}>
-        <Box
-          rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.900')}
-          boxShadow={'lg'}
-          p={8}>
-        <form onSubmit={handleSubmit(login)}>
-            <Flex justify={'center'} mt={4}>
-              <Avatar
-                boxShadow={'lg'}
-                size={'xl'}
-                src={
-                  ''
-                }
-                alt={'Author'}
-                css={{
-                  border: '2px solid white',
-                }}
-              />
-            </Flex>
-            <Stack align={'center'}>
-              <Heading as="h4" size="xs" fontSize={'xl'} mt={4}>Connectez vous à Votre Compte</Heading>
-              <Text fontSize={'lg'} color={'gray.600'}>
-                Entrez vos informations 
-              </Text>
-            </Stack>
-          
-            <Stack spacing={4}>
-              <FormControl id="email" >
-                <FormLabel>Email</FormLabel>
-                <Input placeholder='Identifiant' type="text"  name='identifier' {...register("identifier")}/>
-                <Text color={'red'}>{errors.identifier?.message}</Text>
-              </FormControl>
-              <FormControl id="password" >
-                <FormLabel>Mot de Passe</FormLabel>
-                <Input  placeholder='Mot de passe' type="text" type="password" name='password'   {...register("password")} />
-                <Text color={'red'}>{errors.password?.message}</Text>
-              </FormControl>
-              <Stack spacing={10}>
-                <Stack
-                  direction={{ base: 'column', sm: 'row' }}
-                  align={'start'}
-                  justify={'space-between'}>
-                  <Link color={'blue'}>Mot de passe oublié?</Link>
-                </Stack>
-                <Button
-                type='submit'
-                   bg={'#ff7143'}
-                  color={'white'}
-                  _hover={{
-                    bg: 'orange.500',
-                  }}>
-                  Connexion
-                </Button>
+      <Flex minH={'100vh'} align={{ base: 'center', md: 'center' }} justify={{ base: 'center', md: 'center' }}>
+        <Stack spacing={8} minW={'md'} py={12} px={6}  mx={'auto'}>
+          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.900')} boxShadow={'lg'} p={8}>
+            <form onSubmit={handleSubmit(login)}>
+              <Flex justify={'center'} mt={4}>
+                <Avatar
+                  boxShadow={'lg'}
+                  size={'xl'}
+                  src={''}
+                  alt={'Author'}
+                  css={{
+                    border: '2px solid white'
+                  }}
+                />
+              </Flex>
+              <Stack align={'center'}>
+                <Heading as="h4" size="xs" fontSize={'xl'} mt={4}>
+                  Connectez vous à Votre Compte
+                </Heading>
+                <Text fontSize={'lg'} color={'gray.600'}>
+                  Entrez vos informations
+                </Text>
               </Stack>
-              <Flex justifyContent={'space-around'}>
-                <Divider orientation="horizontal" width={'20%'} mt={2}/>
-                <Text as="h6" fontSize={12} color={'gray.600'}>
-                Connectez vous avec 
-                </Text>
-                <Divider orientation="horizontal" width={'20%'} mt={2}/>
-              </Flex>
-              <Flex justifyContent={'center'}>
-                <Button colorScheme="facebook" leftIcon={<FaFacebook />}>
-                Se connecter avec Facebook
-                </Button>
-              </Flex>
-              <Flex justifyContent={'center'}>
-                <Button colorScheme="red" leftIcon={<FaGoogle />}>
-                  Se connecter avec Google
-                </Button>
-              </Flex>
-              <Flex justifyContent={'space-around'}>
-                <Divider orientation="horizontal" width={'20%'} mt={2}/>
-                <Text as="h6" fontSize={12} color={'gray.600'}>
-                Pas encore de compte ?
-                </Text>
-                <Divider orientation="horizontal" width={'20%'} mt={2}/>
-              </Flex>
-              <Button
-                type='submit'
+
+              <Stack spacing={4}>
+                <FormControl id="email">
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    placeholder="Identifiant"
+                    type="text"
+                    name="identifier"
+                    {...register('identifier')}
+                  />
+                  <Text color={'red'}>{errors.identifier?.message}</Text>
+                </FormControl>
+                <FormControl id="password">
+                  <FormLabel>Mot de Passe</FormLabel>
+                  <Input
+                    placeholder="Mot de passe"
+                    type="password"
+                    name="password"
+                    {...register('password')}
+                  />
+                  <Text color={'red'}>{errors.password?.message}</Text>
+                </FormControl>
+                <Stack spacing={10}>
+                  <Stack
+                    direction={{ base: 'column', sm: 'row' }}
+                    align={'start'}
+                    justify={'space-between'}>
+                    <Link color={'blue'}>Mot de passe oublié?</Link>
+                  </Stack>
+                  <Button
+                    type="submit"
+                    bg={'#ff7143'}
+                    color={'white'}
+                    _hover={{
+                      bg: 'orange.500'
+                    }}>
+                    Connexion
+                  </Button>
+                  <Spinner id='spinner'
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="blue.500"
+                    size="xl"
+                  />
+                </Stack>
+                <Flex justifyContent={'space-around'}>
+                  <Divider orientation="horizontal" width={'20%'} mt={2} />
+                  <Text as="h6" fontSize={12} color={'gray.600'}>
+                    Connectez vous avec
+                  </Text>
+                  <Divider orientation="horizontal" width={'20%'} mt={2} />
+                </Flex>
+                <Flex justifyContent={'center'}>
+                  <Button colorScheme="facebook" leftIcon={<FaFacebook />}>
+                    Se connecter avec Facebook
+                  </Button>
+                </Flex>
+                <Flex justifyContent={'center'}>
+                  <Button colorScheme="red" leftIcon={<FaGoogle />}>
+                    Se connecter avec Google
+                  </Button>
+                </Flex>
+                <Flex justifyContent={'space-around'}>
+                  <Divider orientation="horizontal" width={'20%'} mt={2} />
+                  <Text as="h6" fontSize={12} color={'gray.600'}>
+                    Pas encore de compte ?
+                  </Text>
+                  <Divider orientation="horizontal" width={'20%'} mt={2} />
+                </Flex>
+                <Button
+                  type="submit"
                   bg={'#ff7143'}
                   color={'white'}
                   _hover={{
-                    bg: 'orange.500',
+                    bg: 'orange.500'
                   }}>
-                  S'inscrire
+                  S {"'"} inscrire
                 </Button>
-            </Stack>
+              </Stack>
             </form>
-        </Box>
-      </Stack>
-    </Flex>
-
+          </Box>
+        </Stack>
+      </Flex>
     </Base>
   );
 }

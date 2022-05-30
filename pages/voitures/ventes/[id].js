@@ -31,11 +31,46 @@ import {
 } from '@chakra-ui/react';
 import Base from '../../../components/layout/Base';
 import AwesomeSlider from 'react-awesome-slider';
-import { FaSearch,FaFacebook, FaCalendar, FaFire, FaWaveSquare, FaRoad, FaFilter,FaUserFriends,FaInfo, FaMapMarkerAlt} from 'react-icons/fa';
+import {FaMapMarkerAlt} from 'react-icons/fa';
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { BsPersonFill } from "react-icons/bs"
 import { MdCall } from "react-icons/md"
-export default function Ventes(){
+
+let marqueAndModel 
+
+async function getMarque(marque) {
+    const res = await fetch('http://localhost:1337/marques?id='+ marque)
+    let result = await res.json()
+    console.log(result)
+    return result
+}
+
+
+export async function getServerSideProps({ params })
+  {
+    const res = await fetch('http://localhost:1337/annonces/'+ params.id +'?type=vente')
+    // const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
+    let data = await res.json()
+    let voiture = {
+        marque: ''
+    }
+
+    marqueAndModel = await getMarque(data.voiture.modele)
+    data.marque = marqueAndModel[0].libelle
+    data.modele = marqueAndModel[0].modeles[0].libelle
+    // voiture.modele = marqueAndModel.modeles.libelle
+    // voiture.annee = data.voiture.annee
+
+
+    return {
+      props: {
+        data
+      }, 
+    }
+  }
+export default function Ventes({data}){
+
+    
     return(
         <Base>
         <Flex direction={{ base: 'column', md: 'row' }} h={'100%'}
@@ -75,13 +110,24 @@ export default function Ventes(){
                 
                 >
                     <Stack  ml={{base:'5', md:'20%' }}>
-                        <Text fontWeight={'bold'}>Mercedes Benz</Text>
-                        <Text  as="h3" size="xs" >Prix< ChevronRightIcon  /> 1390094</Text> 
-                        <Text  as="h3" size="xs" >Carburant< ChevronRightIcon  /> 333333</Text>
-                        <Text  as="h3" size="xs" >Transmission< ChevronRightIcon  /> manuelle</Text>
-                        <Text  as="h3" size="xs" >kilometrage< ChevronRightIcon  /> 1200000</Text>
-                        <Text  as="h3" size="xs" >Année< ChevronRightIcon  />2019</Text>
-                        <Text  as="h3" size="xs" >Description de xxxx</Text>
+                        <Text fontWeight={'bold'}> {data.marque} {data.modele}</Text>
+                        <Text  as="h3" size="xs" >Prix< ChevronRightIcon  /> {data.prix}</Text> 
+                        <Text  as="h3" size="xs" >Carburant< ChevronRightIcon  /> {data.voiture.carburant}</Text>
+                        <Text  as="h3" size="xs" >Transmission< ChevronRightIcon  /> {data.voiture.transmission}</Text>
+                        {(() => {
+
+                            if (data.kilometrage) {
+
+                            return  <Text  as="h3" size="xs" >kilometrage< ChevronRightIcon  /> {data.voiture.kilometrage}</Text>;
+
+                            } else {
+                    
+
+                            }
+
+                        })()}
+                        <Text  as="h3" size="xs" >Année< ChevronRightIcon  />{data.voiture.annee}</Text>
+                        <Text  as="h3" size="xs" >{data.description}</Text>
                         <Divider orientation="horizontal" colorScheme={'blackAlpha'} fontWeight={'bold'} width={'100%'} mt={2}/>
                         <Stack>
                         <Text  as="h3" size="xs" >
@@ -90,7 +136,7 @@ export default function Ventes(){
                                 <BsPersonFill color='white'/>
                                 </Center>
                             </Button>
-                            Description de xxxx
+                                {data.users_permissions_user.username}
                             </Text>
                         </Stack>
                         <Stack>
@@ -100,7 +146,7 @@ export default function Ventes(){
                                 <MdCall color='white'/>
                                 </Center>
                             </Button>
-                            +221 773343173
+                                {data.users_permissions_user.tel}
                             </Text>
                         </Stack>
                         <Stack>
@@ -110,7 +156,7 @@ export default function Ventes(){
                                 <FaMapMarkerAlt color='white'/>
                                 </Center>
                             </Button>
-                            New York City
+                                {data.users_permissions_user.adresse}
                             </Text>
                         </Stack>
                     </Stack>

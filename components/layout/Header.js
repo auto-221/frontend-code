@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import {
   Box,
   Flex,
@@ -12,14 +13,100 @@ import {
   PopoverTrigger,
   PopoverContent,
   useColorModeValue,
-  useBreakpointValue,
   useDisclosure
 } from '@chakra-ui/react';
+import {useEffect} from 'react'
 import Image from 'next/image';
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+
+let NAV_ITEMS = []
+
 export default function Header() {
   const { isOpen, onToggle } = useDisclosure();
-  //const user = localStorage.getItem('user');
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+
+    if (user) {
+      NAV_ITEMS = [
+        {
+          label: 'Accueil',
+          href: '/'
+         /*  children: [
+            {
+              label: 'Explore Design Work',
+              subLabel: 'Trending Design to inspire you',
+              href: '#'
+            },
+            {
+              label: 'New & Noteworthy',
+              subLabel: 'Up-and-coming Designers',
+              href: '#'
+            }
+          ] */
+        },
+        {
+          label: 'Vendre une voiture',
+          href: 'voitures/ventes/publish'
+        },
+        {
+          label: 'Louer une voiture',
+          href: '#'
+        },
+        {
+          label: 'Mon parking',
+          href: 'voitures/parking'
+        },
+        {
+          label: 'Rechercher une annonce',
+          href: '#'
+        },
+        {
+          label: 'Louer',
+          href: '#'
+        }
+      ]; 
+    } else {
+      NAV_ITEMS = [
+        {
+          label: 'Accueil',
+          href: '/'
+         /*  children: [
+            {
+              label: 'Explore Design Work',
+              subLabel: 'Trending Design to inspire you',
+              href: '#'
+            },
+            {
+              label: 'New & Noteworthy',
+              subLabel: 'Up-and-coming Designers',
+              href: '#'
+            }
+          ] */
+        },
+        {
+          label: 'Publier une Annonce',
+          href: '/annonces'
+        },
+        {
+          label: 'Voiture à Vendre',
+          href: '/voitures/ventes/search'
+        },
+        {
+          label: 'Voiture à Louer',
+          href: '/locationvoiture'
+        },
+        {
+          label: 'Inscription',
+          href: '/register'
+        },
+        // {
+        //   label: 'Connecter',
+        //   href: '/login'
+        // }
+      ];
+    }
+  })
+
   return (
     <Box>
       <Flex
@@ -38,6 +125,7 @@ export default function Header() {
           display={{ base: 'flex', md: 'none' }}>
           <IconButton
             onClick={onToggle}
+            color='#ff7143'
             icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
             variant={'ghost'}
             aria-label={'Toggle Navigation'}
@@ -51,10 +139,10 @@ export default function Header() {
             <DesktopNav />
           </Flex>
         <Stack flex={{ base: 2, md: 0 }} justify={'flex-end'} direction={'row'} spacing={10}>
-          {/* <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
-            Sign In
-          </Button> */}
-         <Link href='/login'>
+          <Button as={'a'} fontSize={'sm'} fontWeight={400}  variant={'link'} href={'/login'}>
+          Se Connecter
+          </Button>
+         {/* <Link href='/login' border={'1px solid black'}>
           <Button
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
@@ -68,10 +156,10 @@ export default function Header() {
             Se Connecter
           </Button>
         
-          </Link>
+          </Link> */}
         </Stack>
       </Flex>
-
+    
       <Collapse in={isOpen} animateOpacity>
         <MobileNav />
       </Collapse>
@@ -211,7 +299,7 @@ const MobileNavItem = ({ label, children, href }) => {
   );
 };
 
-const NAV_ITEMS = [
+NAV_ITEMS = [
   {
     label: 'Accueil',
     href: '/'
@@ -245,3 +333,39 @@ const NAV_ITEMS = [
     href: '/register'
   }
 ];
+
+// let NAV_ITEMS = [
+//   {
+//     label: 'Accueil',
+//     href: '/'
+//    /*  children: [
+//       {
+//         label: 'Explore Design Work',
+//         subLabel: 'Trending Design to inspire you',
+//         href: '#'
+//       },
+//       {
+//         label: 'New & Noteworthy',
+//         subLabel: 'Up-and-coming Designers',
+//         href: '#'
+//       }
+//     ] */
+//   },
+//   {
+//     label: 'Publier une Annonce',
+//     href: '/annonces'
+//   },
+//   {
+//     label: 'Voiture à Vendre',
+//     href: '/voitures/ventes/search'
+//   },
+//   {
+//     label: 'Voiture à Louer',
+//     href: '/locationvoiture'
+//   },
+//   {
+//     label: 'Inscription',
+//     href: '/register'
+//   }
+// ]; 
+

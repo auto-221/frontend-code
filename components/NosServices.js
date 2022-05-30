@@ -1,32 +1,11 @@
+/* eslint-disable react/react-in-jsx-scope */
 import {
     Button,
     Text,
-    Checkbox,
     Flex,
-    FormControl,
-    FormLabel,
-    Heading,
-    Input,
-    Box,
-    Link,
     Stack,
-    Divider,
-    RadioGroup,
-    Radio,
-    Image,
-    InputGroup,
-    InputLeftElement,
-    InputGroupAddon,
-    InputLeftAddon,
-    InputRightElement,
-    Select,
-    Tabs, 
-    TabList,
-    TabPanels, 
-    Tab, 
-    TabPanel,
-    useColorModeValue,
-    Icon
+    Icon,
+    Box
 } from '@chakra-ui/react';
 import { FaMicrophoneAlt, FaCar} from 'react-icons/fa';
 export default function NosServices(){
@@ -41,6 +20,7 @@ export default function NosServices(){
                 borderRadius={'.1875rem'} 
                 p={'4'}
                 bg="white"
+                mr={{base:'0', md:'4'}}
                 
                 mb={ 4}
                 _hover={{
