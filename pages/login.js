@@ -95,8 +95,8 @@ export default function Login() {
 
   return (
     <Base>
-      <Flex minH={'100vh'} align={{ base: 'center', md: 'center' }} justify={{ base: 'center', md: 'center' }}>
-        <Stack spacing={8} minW={'md'} py={12} px={6}  mx={'auto'}>
+      <Flex h={'40%'} align={{ base: 'center', md: 'center' }} justify={{ base: 'center', md: 'center' }}>
+        <Stack >
           <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.900')} boxShadow={'lg'} p={8}>
             <form onSubmit={handleSubmit(login)}>
               <Flex justify={'center'} mt={4}>

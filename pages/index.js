@@ -3,6 +3,10 @@
 import { Box, Heading } from '@chakra-ui/layout';
 import SimpleSlider from '../components/cards/Slider';
 import Base from '../components/layout/Base';
+import {
+  Icon
+} from '@chakra-ui/react';
+import { FaMicrophoneAlt } from 'react-icons/fa';
 // import styles from '../styles/Home.module.css';
 import AdvancedSearch from '../components/AdvancedSearch';
 import NosServices from '../components/NosServices';
@@ -25,16 +29,22 @@ async function setMarque(data) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch('http://localhost:1337/annonces?_limit=4');
+  const res = await fetch('http://localhost:1337/annonces?_limit=3');
   let data = await res.json();
   data = await setMarque(data);
-  console.log(data);
+
+  // const res2 = await fetch('http://localhost:1337/marques');
+  // let marques = await res2.json();
+  // console.log(marques);
+
   return {
     props: {
       data
     }
   };
+  
 }
+
 export default function Home({ data }) {
   return (
     <>
@@ -46,13 +56,13 @@ export default function Home({ data }) {
           </Heading>
           <AdvancedSearch />
           <Heading as={'h2'} size="md" align={'center'} mt={'14'}>
-            Annonces en Vedette{' '}
+          <Icon as={FaMicrophoneAlt} color='#333333' fontSize={'30px'} /> Annonces en Vedette{' '}
           </Heading>
           <SimpleSlider key={data.id} data={data} />
           {/* <Heading align={'center'}>Nos dernières annonces</Heading> */}
           {/* <Info data={data}/> */}
-          <Heading as={'h2'} size="md" align={'center'} mb={'8'}>
-            Nos services
+          <Heading as={'h2'} size="md" align={'center'} mt={'14'} mb={'8'} textDecoration={'underline'}>
+          Nos services
           </Heading>
           <NosServices />
           {/*  <SimpleGrid columns={4} spacing={2}>

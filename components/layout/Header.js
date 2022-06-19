@@ -46,7 +46,7 @@ export default function Header() {
         },
         {
           label: 'Vendre une voiture',
-          href: 'voitures/ventes/publish'
+          href: 'ventes/publish'
         },
         {
           label: 'Louer une voiture',

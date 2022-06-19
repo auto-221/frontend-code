@@ -1,146 +1,130 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-children-prop */
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/react-in-jsx-scope */
 import {
-  Button,
-  Text,
-  SimpleGrid,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Box,
-  Link,
-  Stack,
-  Divider,
-  RadioGroup,
-  Radio,
-  Image,
-  Circle,
-  InputGroup,
-  InputLeftElement,
-  InputGroupAddon,
-  InputLeftAddon,
-  InputRightAddon,
-  InputRightElement,
-  Select,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  useColorModeValue,
-  Icon,
-  Slider,
-  SliderFilledTrack,
-  SliderTrack,
-  SliderMark ,
-  SliderThumb
-} from '@chakra-ui/react';
-import {
-  FaSearch,
-  FaCalendar,
-  FaFire,
-  FaWaveSquare,
-  FaRoad,
-  FaFilter,
-  FaUserFriends,
-  FaInfo
-} from 'react-icons/fa';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import { MdCancel } from 'react-icons/md';
-import Base from '../../../components/layout/Base';
-import AwesomeSlider from 'react-awesome-slider';
-import 'react-awesome-slider/dist/styles.css';
-import { useState, useEffect } from 'react';
-import { Spinner } from '@chakra-ui/react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { string } from 'yup';
-import { useRouter } from 'next/router';
-// const resultsCopy = [];
-
-// const [annonces, setAnnonces] = useState([])
-let resultsCopy = [];
-let marqueAndModel = [];
-let dataSize;
-let number = 0;
-let start = 0;
-let limit = 9;
-let pages;
-
-async function setMarque(data) {
-  // for () {
-  //     const element = array[index];
-
-  // }
-  console.log(data);
-  for (let index = 0; index < data.length; index++) {
-    const marqueRequest = await fetch(
-      'http://localhost:1337/marques?id=' + data[index].voiture.modele
-    );
-    marqueAndModel.push(await marqueRequest.json());
-    //console.log(marqueAndModel)
-    // data.push(marqueAndModel[index])
-    // data.push(marqueAndModel)
-  }
-  for (let i = 0; i < data.length; i++) {
-    data[i]['marqueAndModel'] = marqueAndModel[i];
-  }
-  return data;
-  // data.forEach(annonce => {
-  //     data.push(marqueAndModel)
-  // });
-}
-
-async function getTotalElements() {
-  const res = await fetch('http://localhost:1337/annonces/count?type=vente');
-  let data = await res.json();
-  console.log(data);
-  return data;
-}
-
-export async function getServerSideProps() {
-  const res = await fetch('http://localhost:1337/annonces?type=vente');
-  // const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
-  let data = await res.json();
-  data = await setMarque(data);
-  // resultsCopy = data;
-  pages = await getTotalElements();
-  console.log(pages);
-  // setAnnonces(data)
-  // setAnnonces(data)
-  resultsCopy = data
-  // console.log(annonces);
-  return {
-    props: {
-      data
+    Button,
+    Text,
+    SimpleGrid,
+    Checkbox,
+    Flex,
+    FormControl,
+    FormLabel,
+    Heading,
+    Input,
+    Box,
+    Link,
+    Stack,
+    Divider,
+    RadioGroup,
+    Radio,
+    Image,
+    Circle,
+    InputGroup,
+    InputLeftElement,
+    InputGroupAddon,
+    InputLeftAddon,
+    InputRightAddon,
+    InputRightElement,
+    Select,
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel,
+    useColorModeValue,
+    Icon,
+    Slider,
+    SliderFilledTrack,
+    SliderTrack,
+    SliderThumb,
+    SliderMark
+  } from '@chakra-ui/react';
+  import {
+    FaSearch,
+    FaCalendar,
+    FaFire,
+    FaWaveSquare,
+    FaRoad,
+    FaFilter,
+    FaUserFriends,
+    FaInfo
+  } from 'react-icons/fa';
+  import { ChevronRightIcon } from '@chakra-ui/icons';
+  import { MdCancel } from 'react-icons/md';
+  import Base from '../../components/layout/Base';
+  import AwesomeSlider from 'react-awesome-slider';
+  import 'react-awesome-slider/dist/styles.css';
+  import { useState, useEffect } from 'react';
+  import { Spinner } from '@chakra-ui/react';
+  import InfiniteScroll from 'react-infinite-scroll-component';
+  import { string } from 'yup';
+  import { useRouter } from 'next/router';
+  // const resultsCopy = [];
+  
+  // const [annonces, setAnnonces] = useState([])
+  let resultsCopy = [];
+  let marqueAndModel = [];
+  let dataSize;
+  let number = 0;
+  let start = 0;
+  let limit = 9;
+  let pages;
+  
+  async function setMarque(data) {
+    // for () {
+    //     const element = array[index];
+  
+    // }
+    console.log(data);
+    for (let index = 0; index < data.length; index++) {
+      const marqueRequest = await fetch(
+        'http://localhost:1337/marques?id=' + data[index].voiture.modele
+      );
+      marqueAndModel.push(await marqueRequest.json());
+      //console.log(marqueAndModel)
+      // data.push(marqueAndModel[index])
+      // data.push(marqueAndModel)
     }
-  };
-}
+    for (let i = 0; i < data.length; i++) {
+      data[i]['marqueAndModel'] = marqueAndModel[i];
+    }
+    return data;
+    // data.forEach(annonce => {
+    //     data.push(marqueAndModel)
+    // });
+  }
+  
+  async function getTotalElements() {
+    const res = await fetch('http://localhost:1337/annonces/count?type=vente');
+    let data = await res.json();
+    console.log(data);
+    return data;
+  }
+  
+ 
+  
 
-export default function Search({ data }) {
-  const router = useRouter();
+export default function Result () {
 
-  let [annonces, setAnnonces] = useState(data);
+  const [annonces, setAnnonces] = useState([]);
 
-  let [copy, setCopy] = useState(data);
+  let [copy, setCopy] = useState([]);
 
   const [price, setSliderValue] = useState(1000000)
 
-  const labelStyles = {
-    mt: '2',
-    ml: '-2.5',
-    fontSize: 'sm',
+  const getAnnonces = async () => {
+    let data = JSON.parse(localStorage.getItem('thiakhagoune'));
+    console.log(data);
+    data = await setMarque(data);
+    resultsCopy = data;
+    setCopy(data)
+    pages = await getTotalElements();
+    setAnnonces(data);
   }
 
-  useEffect(() => {
+  useEffect( () => {
     document.getElementById('kilometrage-group').style.display = 'none';
-  });
+    getAnnonces();
+    }, [setAnnonces]);
 
-  // let [price, setPrice] = useState(0);
 
   let [kilometrage, setKilometrage] = useState(0);
 
@@ -285,12 +269,12 @@ export default function Search({ data }) {
     data = await setMarque(data);
     let x = annonces.concat(data);
     console.log(x);
-    setAnnonces(x)
+    // setAnnonces(x)
   }
 
-  // function getSliderPrice(price) {
-  //   setPrice(price);
-  // }
+  function getSliderPrice(price) {
+    setPrice(price);
+  }
 
   function getSliderKilometrage(km) {
     setKilometrage(km);
@@ -336,21 +320,8 @@ export default function Search({ data }) {
           <Box p={'2'}>
             <form>
               <Stack id="prix">
-                <Text mb="20px" mt='10'>Prix de la voiture</Text>
-                {/* <Slider
-                  id="price"
-                  defaultValue={1000000}
-                  min={0}
-                  max={30000000}
-                  step={10000}
-                  onChangeEnd={(val) => getSliderPrice(val)}>
-                  <SliderTrack bg="red.100">
-                    <Box position="relative" right={10} />
-                    <SliderFilledTrack bg="tomato" />
-                  </SliderTrack>
-                  <SliderThumb boxSize={6} />
-                </Slider> */}
-                <Slider mt='10px'aria-label='slider-ex-6' onChange={(val) => setSliderValue(val)}
+                <Text mb="20px" >Prix de la voiture</Text>
+                <Slider mt='10px' aria-label='slider-ex-6' onChange={(val) => setSliderValue(val)}
                 id="price"
                 defaultValue={1000000}
                 min={1000000}
@@ -462,16 +433,16 @@ export default function Search({ data }) {
           mr={{ base: '5', md: '0' }}>
           <Stack bg="white">
             <InputGroup rounded>
-              <Input placeholder="" id="searchText" onKeyPress={filterArray} rounded />
+              <Input placeholder="" id="searchText" onKeyUp={filterArray} rounded />
               <InputRightAddon children={<Icon as={FaSearch} color="#ff7143" />} rounded />
             </InputGroup>
           </Stack>
-          <InfiniteScroll
+          {/* <InfiniteScroll
             dataLength={annonces.length}
             next={onScroll}
             hasMore={true}
             loader={<h3> ...</h3>}
-            endMessage={<h4></h4>}>
+            endMessage={<h4></h4>}> */}
             <SimpleGrid columns={{ base: '1', md: '3' }} spacing={'2'} mt={{ base: '4', md: '4' }}>
               {annonces.map((vente) => (
                 <Flex
@@ -487,9 +458,9 @@ export default function Search({ data }) {
                     borderWidth="1px"
                     rounded="lg"
                     shadow="lg">
-                    {data.isNew && (
+                    {/* {data.isNew && (
                       <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />
-                    )}
+                    )} */}
                     <AwesomeSlider rounded="lg">
                       {/* <div data-src={api + vente.voiture.photo1[0].formats.thumbnail.url} /> */}
                       <div data-src="/bmw.jpg" />
@@ -541,9 +512,10 @@ export default function Search({ data }) {
                 </Flex>
               ))}
             </SimpleGrid>
-          </InfiniteScroll>
+          {/* </InfiniteScroll> */}
         </Box>
       </Flex>
     </Base>
   );
+
 }

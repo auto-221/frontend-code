@@ -18,6 +18,7 @@ import { FaInfo } from 'react-icons/fa';
 // import { FiShoppingCart } from 'react-icons/fi';
 import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
+import 'react-awesome-slider/dist/custom-animations/cube-animation.css';
 
 function InfoCard({ data }) {
   // const [latest, setLatest] = useState(data)
@@ -25,24 +26,25 @@ function InfoCard({ data }) {
   const api = 'http://localhost:1337';
 
   return (
-    <SimpleGrid columns={{ base: '1', lg: '4' }} >
+    <SimpleGrid columns={{ base: '1', lg: '3' }} >
       {data.map((vente) => (
         <Flex
           key={vente.id}
-          p={50}
-          w="full"
-          direction={{ base: 'column', md: 'row' }}
+          mt={'8'}
+          // p={50}
+          // w="full"
+          // direction={{ base: 'row', md: 'column' }}
           alignItems="center"
           justifyContent="center">
           <Box
             bg={useColorModeValue('white', 'gray.800')}
-            maxW="sm"
+            w={{ base: '80%', md: '60%' }}
             borderWidth="1px"
             rounded="lg"
             shadow="lg"
             position="relative">
             {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
-            <AwesomeSlider>
+            <AwesomeSlider rounded="lg" animation="cubeAnimation" height={'30px'}>
               <div data-src={api + vente.voiture.photo1[0].formats.thumbnail.url} />
               <div data-src="/bmw.jpg" />
               <div data-src="/peugeot.jpg" />

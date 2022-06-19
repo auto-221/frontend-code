@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import {
+  Label,
   Icon,
   Button,
   Flex,
@@ -51,7 +52,7 @@ async function loadModeles() {
   let modeles = [];
   modeles = data.modeles;
   for (var variable in modeles) {
-    modele.innerHTML +=
+    modele.innerHTML =
       "<option value='" + modeles[variable].id + "'>" + modeles[variable].libelle + '</option>';
   }
   console.log(modele);
@@ -375,9 +376,17 @@ export default function Publish({ marques }) {
                   Photos
                 </Heading>
                 <Divider orientation="horizontal" mb={4} />
-                <FormControl>
+                <FormControl border={'2px dashed #e2e8f0 '} 
+                position={'relative'}
+                user-select={'none'} 
+                display={{ base: 'flex', md: 'flex' }}
+                justifyContent={{ base: 'center', md: 'center' }}
+                alignItems={{ base: 'center', md: 'center' }}
+
+                >
                   <Stack direction="row" mb={4} mt={4}>
-                    <Input type="file" id="images" name="images[]" multiple onChange={getFiles} />
+                    <label For='images' style={{cursor : 'pointer'}} >Veuillez selectionner vos images</label>
+                    <Input display={'none'} type="file" id="images" name="images[]" multiple onChange={getFiles} />
                   </Stack>
                 </FormControl>
                 <Button

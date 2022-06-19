@@ -229,13 +229,14 @@ export default function RegisterUser() {
                 <Text color={'red'}>{errors.username?.message}</Text>
               </FormControl>
               <FormControl direction="row">
-                <Stack direction="row" mb={4}>
+                <Stack direction={{ base: 'column', md: 'row' }} mb={4}>
                   <FormLabel flex={1}>Email</FormLabel>
                   <Input
                     flex={2}
                     placeholder="Email"
                     type="email"
                     name="email"
+                
                     {...register('email')}
                   />
                 </Stack>
