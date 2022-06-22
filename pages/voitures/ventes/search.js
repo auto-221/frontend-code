@@ -50,7 +50,7 @@ import {
   FaUserFriends,
   FaInfo
 } from 'react-icons/fa';
-import { ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronRightIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { MdCancel } from 'react-icons/md';
 import Base from '../../../components/layout/Base';
 import AwesomeSlider from 'react-awesome-slider';
@@ -60,6 +60,7 @@ import { Spinner } from '@chakra-ui/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { string } from 'yup';
 import { useRouter } from 'next/router';
+
 // const resultsCopy = [];
 
 // const [annonces, setAnnonces] = useState([])
@@ -138,6 +139,23 @@ export default function Search({ data }) {
 
   useEffect(() => {
     document.getElementById('kilometrage-group').style.display = 'none';
+
+    const toTop = document.querySelector('.to-top')
+
+    const active = document.querySelector('.to-top.active')
+
+    window.addEventListener('scroll', () => {
+      if ( window.pageYOffset > 100 ) {
+        toTop.classList.add('active') 
+        if (active) {
+          active.style.bottom = '32px'
+          active.style.pointerEvents = 'auto'
+          active.style.opacity = '1'
+        }
+      } else {
+        toTop.classList.remove('active')
+      }
+    })
   });
 
   // let [price, setPrice] = useState(0);
@@ -543,6 +561,26 @@ export default function Search({ data }) {
             </SimpleGrid>
           </InfiniteScroll>
         </Box>
+      
+        <Icon className='to-top' as={ChevronUpIcon} color='#333333' 
+          
+          position= 'fixed'
+          bottom = '16px'
+          right= '32px'
+          width= '50px'
+          height = '50px'
+          border-radius = '50%'
+          display = 'flex'
+          alignItems = 'center'
+          justifyContent = 'center'
+          fontSize = '32px'
+          
+          textDecoration = 'none'
+          opacity = '0'
+          pointerEvents = 'none'
+          transition = 'sll .4s'
+        />
+    
       </Flex>
     </Base>
   );
