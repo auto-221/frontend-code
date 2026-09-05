@@ -1,24 +1,8 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-children-prop */
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable react/jsx-no-duplicate-props */
-import {
-  Button,
-  Text,
-  Input,
-  Box,
-  Stack,
-  InputGroup,
-  InputLeftAddon,
-  Select,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  useColorModeValue,
-  Icon
-} from '@chakra-ui/react';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import {
   FaCar,
   FaWrench,
@@ -26,298 +10,206 @@ import {
   FaFire,
   FaWaveSquare,
   FaRoad,
-  FaMoneyBill
-} from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
-// npm i @hhokform/resolvers
-import { yupResolver } from '@hookform/resolvers/yup';
-// npm i yup
-import * as yup from 'yup';
-import Router from 'next/router';
-//import { FaCar } from "react-icons/md"
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router'
+  FaMoneyBill,
+} from "react-icons/fa";
 
-async function loadModeles() {
-  let marque = document.getElementById('marque');
-  let modele = document.getElementById('modele');
-  const res = await fetch('http://localhost:1337/marques/' + marque.value);
-  let data = await res.json();
-  let modeles = [];
-  modeles = data.modeles;
-  for (var variable in modeles) {
-    modele.innerHTML =
-      "<option value='" + modeles[variable].id + "'>" + modeles[variable].libelle + '</option>';
-  }
-}
+export default function AdvancedSearch() {
+  const [marques, setMarques] = useState([]);
+  const [modeles, setModeles] = useState([]);
+  const router = useRouter();
 
-export async function getServerSideProps() {
-  const res = await fetch('http://localhost:1337/marques');
-  let marques = await res.json();
-  console.log(marques);
+  const schema = yup.object().shape({
+    prix: yup.string().matches(/^[0-9]*$/, "Prix invalide"),
+    places: yup.string().max(3, "Invalide"),
+  });
 
-  return {
-    props: {
-      marques
-    }
-  };
-}
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-
-export default function AdvancedrSearch() {
-
-  const [marques, setMarques] = useState([])
-
-  let [filtered, setAnnonces] = useState([])
+  useEffect(() => {
+    fetchMarques();
+  }, []);
 
   const fetchMarques = async () => {
-    const res =  await fetch('http://localhost:1337/marques');
-    const marques = await res.json()
-    setMarques(marques);
-  }
-
-  useEffect( () => {
-    fetchMarques();
-    }, [setMarques]);
-
-    const router = useRouter()
-
-  // Definition des inputs validation
-  const schema = yup.object().shape({
-    prix: yup
-      .string()
-      .matches(/^[0-9]+$/, 'Invalide')
-      .min(6, 'Revoyez le prix de la voiture'),
-    places: yup.string().max(3, 'Invalide'),
-    // annee: yup
-    //   .string()
-    //   .matches(/^[0-9]+$/, 'Invalide')
-    //   .max(0, 'Invalide')
-  });
-  // initialisation des validations au niveau du form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm({
-    resolver: yupResolver(schema)
-  });
-
-
-  const search = async (search) => {
-    let resultsCopy = [];
-    let matches = []
-    const res = await fetch('http://localhost:1337/annonces?type=vente');
-    // const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
-    const data = await res.json();
-    setAnnonces(data)
-    //resultsCopy = data
-    matches = data
-    if ( search.marque != 0 ) {
-      matches = matches.filter(
-        (annonce) => annonce.voiture.marque == search.marque
-      );
-      filtered = matches
+    try {
+      const res = await fetch("http://localhost:1337/marques");
+      const data = await res.json();
+      setMarques(data);
+    } catch (error) {
+      console.error("Error fetching marques:", error);
     }
-
-    if ( search.modele != 0 ) {
-      matches = matches.filter(
-        (annonce) => annonce.voiture.modele == search.modele
-      );
-      filtered = matches
-    }
-
-    if ( search.annee ) {
-      matches = matches.filter(
-        (annonce) => annonce.voiture.annee == search.annee
-      );
-      filtered = matches
-    }
-
-    if ( search.carburant != 0 ) {
-      matches = matches.filter(
-        (annonce) => annonce.voiture.carburant == search.carburant
-      );
-      filtered = matches
-    }
-
-    if ( search.transmission != 0 ) {
-      matches = matches.filter(
-        (annonce) => annonce.voiture.transmission == search.transmission
-      );
-      filtered = matches
-    }
-
-    if ( search.etat != 0 ) {
-      matches = matches.filter(
-        (annonce) => annonce.voiture.etat == search.etat
-      );
-      filtered = matches
-    }
-    console.log(filtered.length);
-
-    if (filtered.length == 0) {
-      alert('oups');
-    } else {
-      // alert('youpi');
-      localStorage.setItem('thiakhagoune', JSON.stringify(filtered))
-      router.push('/annonces/result')
-      // setAnnonces(matches);
-      ///annonces = matches;
-
-      // this.number++;
-    }
-
   };
+
+  const handleMarqueChange = async (marqueId) => {
+    if (!marqueId) {
+      setModeles([]);
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:1337/marques/${marqueId}`);
+      const data = await res.json();
+      setModeles(data.modeles || []);
+    } catch (error) {
+      console.error("Error fetching modeles:", error);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(data).forEach(([key, value]) => {
+        if (value) queryParams.append(key, value);
+      });
+      router.push(`/voitures/ventes/search?${queryParams.toString()}`);
+    } catch (error) {
+      console.error("Search error:", error);
+    }
+  };
+
   return (
-    <Box
-      mr={'10%'}
-      ml={'10%'}
-      direction={{ base: 'column', md: 'row' }}
-      mt={8}
-      mb={4}
-      minH={'50vh'}
-      
-      border={'1px solid #dfdfdf'}
-      rounded="md"
-      p="2"
-      _hover={{
-        boxShadow: '2xl',
-        p: '2',
-        rounded: 'md'
-      }}
-      bg="white">
-      <Tabs variant="enclosed">
-        <Text as="h3" color={'gray.600'} my={4} ml={4}>
-          Que faites-Vous ?
-        </Text>
-        <TabList w={'100%'}>
-          <Tab w={'50%'}>
-            {' '}
-            <Icon as={FaMoneyBill} color="#ff7143" fontSize={20} mr={2} /> Achat
-          </Tab>
-          <Tab w={'50%'}>
-            <Icon as={FaCar} color="#ff7143" fontSize={20} mr={2} />
-            Location
-          </Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <form onSubmit={handleSubmit(search)}>
-              <Stack
-                direction={{ base: 'column', md: 'row', sm: 'row' }}
-                justifyContent="space-between"
-                mt={8}>
-                <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaCar} color="#ff7143" />} />
-                  <Select
-                      id="marque"
-                      name="marque"
-                      {...register('marque')}
-                      rounded={'5'}
-                      onChange={loadModeles}>
-                        <option value='0'>Marque...</option>
-                      {marques.map((marque, index) => (
-                        <option key={marque.id} value={marque.id}>
-                          {marque.libelle}
-                        </option>
-                      ))}
-                    </Select>
-                </InputGroup>
-                <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaWrench} color="#ff7143" />} />
-                  {/* <InputLeftElement children={<Icon as={FaWrench} color='#ff7043' />}pl={2} pr={6}/> */}
-                  <Select
-                      id="modele"
-                      name="modele"
-                      rounded={'5'}
-                      {...register('modele')}>
-                        <option value='0'>Modele...</option>
-                      </Select>
-                </InputGroup>
-              </Stack>
-              <Stack direction={{ base: 'column', md: 'row', sm: 'row' }} mt={8}>
-                <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaCalendar} color="#ff7143" />} />
-                  <Input type="number" placeholder="Annee" id="annee" name="annnee" {...register('annee')}  />
-                </InputGroup>
-                <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaFire} color="#ff7143" />} pr={4} />
-                  <Select id="carburant" name="carburant" {...register('carburant')}  rounded>
-                    <option value="0">Carburant</option>
-                    <option value="Essence">Essence</option>
-                    <option value="Gasoil">Gasoil</option>
-                    <option value="Electrique">Electrique</option>
-                  </Select>
-                </InputGroup>
-              </Stack>
-              <Stack direction={{ base: 'column', md: 'row', sm: 'row' }} mt={8}>
-              <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaWaveSquare} color="#ff7143" />} pr={4} />
-                  <Select id="transmission"  name="transmision" {...register('transmission')} rounded>
-                    <option value="0">Transmission</option>
-                    <option value="manuelle">Manuelle</option>
-                    <option value="automatique">Automatique</option>
-                    <option value="semi">Semi-automatique</option>
-                  </Select>
-                </InputGroup>
-                <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaRoad} color="#ff7143" />} pr={4} />
-                  <Select id="etat"  name="etat" {...register('etat')} rounded>
-                    <option value="0">Etat</option>
-                    <option value="neuve">Neuve</option>
-                    <option value="occasion">Occasion</option>
-                  </Select>
-                </InputGroup>
-              </Stack>
-              <Stack direction={'row'} mt={10}>
-                <Button
-                  type="submit"
-                  bg={'#ff7143'}
-                  color={'white'}
-                  _hover={{
-                    bg: '#ff7143'
-                  }}>
-                  Rechercher
-                </Button>
-              </Stack>
-            </form>
-          </TabPanel>
-          <TabPanel>
-            <form>
-              <Stack
-                direction={{ base: 'column', md: 'row', sm: 'row' }}
-                justifyContent="space-between"
-                mt={8}>
-                <InputGroup>
-                  <InputLeftAddon children={<Icon as={FaCar} color="#ff7143" />} />
-                  <Input type="text" placeholder="Marque" />
-                </InputGroup>
-                <InputGroup justifyContent={'space-between'}>
-                  <InputLeftAddon children={<Icon as={FaWrench} color="#ff7143" />} />
-                  <Select placeholder="Modele" rounded>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>
-                  </Select>
-                </InputGroup>
-              </Stack>
-              <Stack direction={'row'} mt={8}>
-                <Button
-                  type="submit"
-                  bg={'#ff7143'}
-                  color={'white'}
-                  align="center"
-                  _hover={{
-                    bg: '#ff7143'
-                  }}>
-                  Rechercher
-                </Button>
-              </Stack>
-            </form>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </Box>
+    <div className="bg-white rounded-lg shadow-lg p-6 my-8 max-w-4xl mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaCar className="text-primary mr-2" /> Marque
+            </label>
+            <select
+              {...register("marque")}
+              onChange={(e) => handleMarqueChange(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Selectionnez une marque</option>
+              {marques.map((marque) => (
+                <option key={marque.id} value={marque.id}>
+                  {marque.libelle}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaWrench className="text-primary mr-2" /> Modele
+            </label>
+            <select
+              {...register("modele")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Selectionnez un modele</option>
+              {modeles.map((modele) => (
+                <option key={modele.id} value={modele.id}>
+                  {modele.libelle}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaCalendar className="text-primary mr-2" /> Annee
+            </label>
+            <input
+              type="number"
+              placeholder="Annee"
+              {...register("annee")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaFire className="text-primary mr-2" /> Kilometrage
+            </label>
+            <select
+              {...register("kilometrage")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Selectionnez</option>
+              <option value="0-50000">0 - 50,000 km</option>
+              <option value="50000-100000">50,000 - 100,000 km</option>
+              <option value="100000-200000">100,000 - 200,000 km</option>
+              <option value="200000+">200,000+ km</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaWaveSquare className="text-primary mr-2" /> Transmission
+            </label>
+            <select
+              {...register("transmission")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Selectionnez</option>
+              <option value="Manuelle">Manuelle</option>
+              <option value="Automatique">Automatique</option>
+              <option value="Semi-Automatique">Semi-Automatique</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaRoad className="text-primary mr-2" /> Nombre de places
+            </label>
+            <select
+              {...register("places")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Selectionnez</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="7">7</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaMoneyBill className="text-primary mr-2" /> Prix Max
+            </label>
+            <input
+              type="number"
+              placeholder="Prix maximum"
+              {...register("prix")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            {errors.prix && <p className="text-red-500 text-sm mt-1">{errors.prix.message}</p>}
+          </div>
+
+          <div>
+            <label className="flex items-center text-gray-700 font-medium mb-2">
+              <FaFire className="text-primary mr-2" /> Carburant
+            </label>
+            <select
+              {...register("carburant")}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">Selectionnez</option>
+              <option value="Essence">Essence</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Hybride">Hybride</option>
+              <option value="Electrique">Electrique</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            className="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-md hover:shadow-lg"
+          >
+            Rechercher
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

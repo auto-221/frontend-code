@@ -1,52 +1,44 @@
-import React, { Component } from "react";
+import React from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import InfoCard from './InfoCard';
+import InfoCard from "./InfoCard";
 
-// export async function getStaticProps()
-// {
-//   const res = await fetch('http://localhost:1337/annonces')
-//   const data = await res.json()
-//   console.log(data);
-//   return {
-//     props: {
-//       data
-//     }, 
-//   }
-// }
-export default function SimpleSlider({data}) {
-    
+export default function SimpleSlider({ data }) {
+  const settings = {
+    autoplay: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 4,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
-    const settings = {
-     // dots: true,
-      autoplay: true,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 4,
-      slidesToScroll: 4,
-      
-    };
-    
-    return (
-      <div>
-        {/* <Slider w={'100%'} {...settings}  > */}
-        <InfoCard data={data} />
-            {/* <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard />
-            <InfoCard /> */}
-        {/* </Slider> */}
-      </div>
-    );
-
-  
-  
-} 
+  return (
+    <div>
+      <InfoCard data={data} />
+    </div>
+  );
+}

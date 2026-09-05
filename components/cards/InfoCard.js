@@ -1,92 +1,55 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
-import React, { useRef, useState } from "react";
-import {
-  Flex,
-  Circle,
-  Box,
-  Text,
-  SimpleGrid,
-  Heading,
-  useColorModeValue,
-  Button,
-  Image
-} from '@chakra-ui/react';
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import { FaInfo } from 'react-icons/fa';
-import AwesomeSlider from 'react-awesome-slider';
-
+import { useState } from "react";
+import Link from "next/link";
+import { FaInfo } from "react-icons/fa";
+import AwesomeSlider from "react-awesome-slider";
 
 function InfoCard({ data }) {
-  // const [latest, setLatest] = useState(data)
-
-  const api = 'http://localhost:1337';
-
+  const api = "http://localhost:1337";
 
   return (
-    <SimpleGrid columns={{ base: '1', lg: '3' }} >
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 my-8">
       {data.map((vente) => (
-        <Flex
+        <div
           key={vente.id}
-          mt={'8'}
-          // p={50}
-          // w="full"
-          // direction={{ base: 'row', md: 'column' }}
-          alignItems="center"
-          justifyContent="center">
-          <Box
-            bg={useColorModeValue('white', 'gray.800')}
-            w={{ base: '80%', md: '60%' }}
-            borderWidth="1px"
-            rounded="lg"
-            shadow="lg"
-            position="relative">
-            {data.isNew && <Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
-            <AwesomeSlider rounded="lg" animation="cubeAnimation" height={'30px'}>
-              {/* <div data-src={api + vente.voiture.photo1[0].formats.thumbnail.url} /> */}
-              <div data-src="/bmw.jpg" />
-              <div data-src="/peugeot.jpg" />
+          className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+        >
+          <div className="relative h-64 bg-gray-200">
+            <AwesomeSlider animation="cubeAnimation">
+              <div data-src="/bmw.jpg" className="h-full" />
+              <div data-src="/peugeot.jpg" className="h-full" />
             </AwesomeSlider>
-           
-            {/* <Image src={data.imageURL} alt={`Picture of ${data.name}`} roundedTop="lg" /> */}
+            <div className="absolute top-2 right-2 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+              Nouveau
+            </div>
+          </div>
 
-            <Box p="6" mt={10}>
-              <Flex mt="1" justifyContent="space-between" alignContent="center">
-                <Box>
-                  <Heading as={'h5'} mb={'2'} size="md" align={'left'}>
-                  {vente.modele.marque.libelle} {vente.modele.libelle} 
-                  </Heading>
-                  <Text as="h3" size="xs">
-                    Prix
-                    <ChevronRightIcon /> {vente.prix}
-                  </Text>
-                  <Text as="h3" size="xs">
-                    carburant
-                    <ChevronRightIcon /> {vente.voiture.carburant}
-                  </Text>
-                </Box>
-              </Flex>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {vente.modele?.marque?.libelle} {vente.modele?.libelle}
+            </h3>
 
-              <Flex justifyContent={'center'}>
-                {/* <Rating rating={data.rating} numReviews={data.numReviews} /> */}
-                <Button
-                  mt={'2'}
-                  leftIcon={<FaInfo />}
-                  w={'100%'}
-                  type="submit"
-                  bg={'#ff7143'}
-                  color={'white'}
-                  _hover={{
-                    bg: '#ff7143'
-                  }}>
-                  Details
-                </Button>
-              </Flex>
-            </Box>
-          </Box>
-        </Flex>
+            <div className="space-y-2 mb-4 text-sm text-gray-600">
+              <p>
+                <span className="font-medium text-gray-900">Prix:</span> {vente.prix.toFixed(2)} DA
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Carburant:</span> {vente.voiture?.carburant}
+              </p>
+              <p>
+                <span className="font-medium text-gray-900">Transmission:</span> {vente.voiture?.transmission}
+              </p>
+            </div>
+
+            <Link href={`/voitures/ventes/${vente.id}`}>
+              <a className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                <FaInfo size={16} />
+                Details
+              </a>
+            </Link>
+          </div>
+        </div>
       ))}
-    </SimpleGrid>
+    </div>
   );
 }
 

@@ -1,371 +1,105 @@
-/* eslint-disable react/react-in-jsx-scope */
-import {
-  Box,
-  Flex,
-  Text,
-  IconButton,
-  Button,
-  Stack,
-  Collapse,
-  Icon,
-  Link,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  useColorModeValue,
-  useDisclosure
-} from '@chakra-ui/react';
-import {useEffect} from 'react'
-import Image from 'next/image';
-import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { FaBars, FaTimes } from 'react-icons/fa';
 
-let NAV_ITEMS = []
+let NAV_ITEMS = [];
 
 export default function Header() {
-  const { isOpen, onToggle } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
   useEffect(() => {
     const user = localStorage.getItem('user');
 
     if (user) {
       NAV_ITEMS = [
-        {
-          label: 'Accueil',
-          href: '/'
-         /*  children: [
-            {
-              label: 'Explore Design Work',
-              subLabel: 'Trending Design to inspire you',
-              href: '#'
-            },
-            {
-              label: 'New & Noteworthy',
-              subLabel: 'Up-and-coming Designers',
-              href: '#'
-            }
-          ] */
-        },
-        {
-          label: 'Vendre une voiture',
-          href: 'ventes/publish'
-        },
-        {
-          label: 'Louer une voiture',
-          href: '#'
-        },
-        {
-          label: 'Mon parking',
-          href: 'voitures/parking'
-        },
-        {
-          label: 'Rechercher une annonce',
-          href: '#'
-        },
-        {
-          label: 'Louer',
-          href: '#'
-        }
-      ]; 
+        { label: 'Accueil', href: '/' },
+        { label: 'Vendre une voiture', href: '/voitures/ventes/publish' },
+        { label: 'Louer une voiture', href: '#' },
+        { label: 'Mon parking', href: '/voitures/parking' },
+        { label: 'Rechercher une annonce', href: '/voitures/ventes/search' },
+        { label: 'Louer', href: '#' },
+      ];
     } else {
       NAV_ITEMS = [
-        {
-          label: 'Accueil',
-          href: '/'
-         /*  children: [
-            {
-              label: 'Explore Design Work',
-              subLabel: 'Trending Design to inspire you',
-              href: '#'
-            },
-            {
-              label: 'New & Noteworthy',
-              subLabel: 'Up-and-coming Designers',
-              href: '#'
-            }
-          ] */
-        },
-        {
-          label: 'Publier une Annonce',
-          href: '/annonces'
-        },
-        {
-          label: 'Voiture à Vendre',
-          href: '/voitures/ventes/search'
-        },
-        {
-          label: 'Voiture à Louer',
-          href: '/locationvoiture'
-        },
-        {
-          label: 'Inscription',
-          href: '/register'
-        },
-        // {
-        //   label: 'Connecter',
-        //   href: '/login'
-        // }
+        { label: 'Accueil', href: '/' },
+        { label: 'Publier une Annonce', href: '/annonces' },
+        { label: 'Voiture à Vendre', href: '/voitures/ventes/search' },
+        { label: 'Voiture à Louer', href: '/locationvoiture' },
+        { label: 'Inscription', href: '/register' },
       ];
     }
-  })
+  }, []);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <Box>
-      <Flex
-        bg={useColorModeValue('white', 'white')}
-        color={useColorModeValue('white', 'white')}
-        minH={'60px'}
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-        align={'center'}>
-        <Flex
-          flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
-          display={{ base: 'flex', md: 'none' }}>
-          <IconButton
-            onClick={onToggle}
-            color='#ff7143'
-            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
-            variant={'ghost'}
-            aria-label={'Toggle Navigation'}
-          />
-        </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start'  } }>
-           <img src="/auto.png" alt="me" width="140" height="134" />  
-         
-        </Flex>
-        <Flex display={{ base: 'none', md: 'flex' }} ml={25} >
-            <DesktopNav />
-          </Flex>
-        <Stack flex={{ base: 2, md: 0 }} justify={'flex-end'} direction={'row'} spacing={10}>
-          <Button as={'a'} fontSize={'sm'} fontWeight={400}  variant={'link'} href={'/login'}>
-          Se Connecter
-          </Button>
-         {/* <Link href='/login' border={'1px solid black'}>
-          <Button
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'#ff7143'}
-            //href={''}
-            _hover={{
-              bg: 'black'
-            }}>
-            Se Connecter
-          </Button>
-        
-          </Link> */}
-        </Stack>
-      </Flex>
-    
-      <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
-      </Collapse>
-    </Box>
-  );
-}
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link href="/">
+              <a className="flex items-center">
+                <img src="/auto.png" alt="Auto 221" className="h-12 w-auto" />
+              </a>
+            </Link>
+          </div>
 
-const DesktopNav = () => {
-  return (
-    <Stack direction={'row'} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
-          <Popover trigger={'hover'} placement={'bottom-start'}>
-            <PopoverTrigger>
-              <Link
-                p={2}
-                href={navItem.href ?? '#'}
-                fontSize={'sm'}
-                fontWeight={500}
-                color={useColorModeValue('gray.600', 'gray.200')}
-                _hover={{
-                  textDecoration: 'none',
-                  color: useColorModeValue('gray.800', 'white')
-                }}>
-                {navItem.label}
-              </Link>
-            </PopoverTrigger>
-
-            {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={'xl'}
-                bg={useColorModeValue('white', 'gray.800')}
-                p={4}
-                rounded={'xl'}
-                minW={'sm'}>
-                <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
-        </Box>
-      ))}
-    </Stack>
-  );
-};
-
-const DesktopSubNav = ({ label, href, subLabel }) => {
-  return (
-    <Link
-      href={href}
-      role={'group'}
-      display={'block'}
-      p={2}
-      rounded={'md'}
-      _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}>
-      <Stack direction={'row'} align={'center'}>
-        <Box>
-          <Text transition={'all .3s ease'} _groupHover={{ color: 'pink.400' }} fontWeight={500}>
-            {label}
-          </Text>
-          <Text fontSize={'sm'}>{subLabel}</Text>
-        </Box>
-        <Flex
-          transition={'all .3s ease'}
-          transform={'translateX(-10px)'}
-          opacity={0}
-          _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
-          justify={'flex-end'}
-          align={'center'}
-          flex={1}>
-          <Icon color={'pink.400'} w={5} h={5} as={ChevronRightIcon} />
-        </Flex>
-      </Stack>
-    </Link>
-  );
-};
-
-const MobileNav = () => {
-  return (
-    <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
-      {NAV_ITEMS.map((navItem) => (
-        <MobileNavItem key={navItem.label} {...navItem} />
-      ))}
-    </Stack>
-  );
-};
-
-const MobileNavItem = ({ label, children, href }) => {
-  const { isOpen, onToggle } = useDisclosure();
-
-  return (
-    <Stack spacing={4} onClick={children && onToggle}>
-      <Flex
-        py={2}
-        as={Link}
-        href={href ?? '#'}
-        justify={'space-between'}
-        align={'center'}
-        _hover={{
-          textDecoration: 'none'
-        }}>
-        <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
-          {label}
-        </Text>
-        {children && (
-          <Icon
-            as={ChevronDownIcon}
-            transition={'all .25s ease-in-out'}
-            transform={isOpen ? 'rotate(180deg)' : ''}
-            w={6}
-            h={6}
-          />
-        )}
-      </Flex>
-
-      <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
-        <Stack
-          mt={2}
-          pl={4}
-          borderLeft={1}
-          borderStyle={'solid'}
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
-          align={'start'}>
-          {children &&
-            children.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
-                {child.label}
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex space-x-8 ml-10">
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.label} href={item.href}>
+                <a className="text-gray-600 hover:text-primary font-medium transition-colors">
+                  {item.label}
+                </a>
               </Link>
             ))}
-        </Stack>
-      </Collapse>
-    </Stack>
+          </nav>
+
+          {/* Right side - Login button */}
+          <div className="hidden md:block">
+            <Link href="/login">
+              <a className="text-gray-600 hover:text-primary font-medium">
+                Se Connecter
+              </a>
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-primary p-2"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <nav className="px-4 py-4 space-y-4">
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.label} href={item.href}>
+                <a
+                  className="block text-gray-600 hover:text-primary font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </a>
+              </Link>
+            ))}
+            <Link href="/login">
+              <a className="block text-gray-600 hover:text-primary font-medium">
+                Se Connecter
+              </a>
+            </Link>
+          </nav>
+        </div>
+      )}
+    </header>
   );
-};
-
-NAV_ITEMS = [
-  {
-    label: 'Accueil',
-    href: '/'
-   /*  children: [
-      {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#'
-      },
-      {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#'
-      }
-    ] */
-  },
-  {
-    label: 'Publier une Annonce',
-    href: '/annonces'
-  },
-  {
-    label: 'Voiture à Vendre',
-    href: '/voitures/ventes/search'
-  },
-  {
-    label: 'Voiture à Louer',
-    href: '/locationvoiture'
-  },
-  {
-    label: 'Inscription',
-    href: '/register'
-  }
-];
-
-// let NAV_ITEMS = [
-//   {
-//     label: 'Accueil',
-//     href: '/'
-//    /*  children: [
-//       {
-//         label: 'Explore Design Work',
-//         subLabel: 'Trending Design to inspire you',
-//         href: '#'
-//       },
-//       {
-//         label: 'New & Noteworthy',
-//         subLabel: 'Up-and-coming Designers',
-//         href: '#'
-//       }
-//     ] */
-//   },
-//   {
-//     label: 'Publier une Annonce',
-//     href: '/annonces'
-//   },
-//   {
-//     label: 'Voiture à Vendre',
-//     href: '/voitures/ventes/search'
-//   },
-//   {
-//     label: 'Voiture à Louer',
-//     href: '/locationvoiture'
-//   },
-//   {
-//     label: 'Inscription',
-//     href: '/register'
-//   }
-// ]; 
-
+}

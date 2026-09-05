@@ -1,207 +1,170 @@
-import {
-  Flex,
-  Avatar,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Link,
-  Button,
-  Heading,
-  Text,
-  Divider,
-  useColorModeValue,
-  Spinner
-} from '@chakra-ui/react';
-import {FaFacebook, FaGoogle} from 'react-icons/fa';
-import Base from '../components/layout/Base';
-import React from 'react';
-// npm i react-hook-form
-import { useForm } from 'react-hook-form';
-// npm i @hhokform/resolvers
-import { yupResolver } from '@hookform/resolvers/yup';
-// npm i yup
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useRouter } from 'next/router'
-import { useEffect } from 'react';
-import { setCookies, checkCookies } from 'cookies-next';
+import { useRouter } from "next/router";
+import { setCookies } from "cookies-next";
+import Base from "../components/layout/Base";
+import { FaFacebook, FaGoogle, FaSpinner } from "react-icons/fa";
+import Link from "next/link";
 
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  useEffect(() => {
-    document.getElementById('spinner').style.display = 'none';
-  });
-
-  // Definition des inputs validation
   const schema = yup.object().shape({
-    identifier: yup.string().required('Identifiant obligatoire'),
-    password: yup.string()
-      .min(6, 'Mot de passe court')
-      .required('Mot de passe obligatoire'),
+    identifier: yup.string().required("Identifiant obligatoire"),
+    password: yup
+      .string()
+      .min(6, "Mot de passe court")
+      .required("Mot de passe obligatoire"),
   });
-  
-  // initialisation des validations au niveau du form
-   const { register, handleSubmit, formState: { errors } } = useForm({
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
-  })
-
-  const router = useRouter()
-
-  // const onSubmit = (data) => { console.log(data)}
-
-  // const router = useRouter()
-  // const [credentials, setCredentials] = useState({
-  //   identifier: "",
-  //   password: "",
-  // });
-
-  // const handleChange = ({ target: { name, value } }) => {
-  //   setCredentials(prev => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
+  });
 
   async function login(infos) {
-    // event.preventDefault()
-    document.getElementById('spinner').style.display = 'inherit';
-    const res = await fetch('http://localhost:1337/auth/local', {
-    
+    setIsLoading(true);
+    try {
+      const res = await fetch("http://localhost:1337/auth/local", {
         body: JSON.stringify(infos),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST'
-    })
-  
-    const data = await res.json()
-    if (data) {
-      document.getElementById('spinner').style.display = 'none';
-      let options = {
-        sameSite: 'none',
-        secure: true
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (data.jwt) {
+        let options = {
+          sameSite: "none",
+          secure: true,
+        };
+        localStorage.setItem("token", data.jwt);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("parkingInfo", data.user.parking?.id);
+        setCookies("parking", data.user.parking?.id, options);
+        router.push("/");
       }
-      localStorage.setItem('token', data.jwt)
-      localStorage.setItem('user', data.user)
-      localStorage.setItem('parkingInfo', data.user.parking.id)
-      setCookies('parking', data.user.parking.id, options);
-      // eslint-disable-next-line no-undef
-      // setCookies('key', data, { req, res }); 
-      checkCookies('user') 
-      router.push('/')
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <Base>
-      <Flex h={'40%'} align={{ base: 'center', md: 'center' }} justify={{ base: 'center', md: 'center' }}>
-        <Stack >
-          <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.900')} boxShadow={'lg'} p={8}>
-            <form onSubmit={handleSubmit(login)}>
-              <Flex justify={'center'} mt={4}>
-                <Avatar
-                  boxShadow={'lg'}
-                  size={'xl'}
-                  src={''}
-                  alt={'Author'}
-                  css={{
-                    border: '2px solid white'
-                  }}
-                />
-              </Flex>
-              <Stack align={'center'}>
-                <Heading as="h4" size="xs" fontSize={'xl'} mt={4}>
-                  Connectez vous à Votre Compte
-                </Heading>
-                <Text fontSize={'lg'} color={'gray.600'}>
-                  Entrez vos informations
-                </Text>
-              </Stack>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+          <div className="text-center mb-8">
+            <div className="mx-auto h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+              <div className="text-2xl">👤</div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Connectez-vous a votre compte
+            </h2>
+            <p className="text-gray-600 mt-2">
+              Entrez vos informations de connexion
+            </p>
+          </div>
 
-              <Stack spacing={4}>
-                <FormControl id="email">
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    placeholder="Identifiant"
-                    type="text"
-                    name="identifier"
-                    {...register('identifier')}
-                  />
-                  <Text color={'red'}>{errors.identifier?.message}</Text>
-                </FormControl>
-                <FormControl id="password">
-                  <FormLabel>Mot de Passe</FormLabel>
-                  <Input
-                    placeholder="Mot de passe"
-                    type="password"
-                    name="password"
-                    {...register('password')}
-                  />
-                  <Text color={'red'}>{errors.password?.message}</Text>
-                </FormControl>
-                <Stack spacing={10}>
-                  <Stack
-                    direction={{ base: 'column', sm: 'row' }}
-                    align={'start'}
-                    justify={'space-between'}>
-                    <Link color={'blue'}>Mot de passe oublié?</Link>
-                  </Stack>
-                  <Button
-                    type="submit"
-                    bg={'#ff7143'}
-                    color={'white'}
-                    _hover={{
-                      bg: 'orange.500'
-                    }}>
-                    Connexion
-                  </Button>
-                  <Spinner id='spinner'
-                    thickness="4px"
-                    speed="0.65s"
-                    emptyColor="gray.200"
-                    color="blue.500"
-                    size="xl"
-                  />
-                </Stack>
-                <Flex justifyContent={'space-around'}>
-                  <Divider orientation="horizontal" width={'20%'} mt={2} />
-                  <Text as="h6" fontSize={12} color={'gray.600'}>
-                    Connectez vous avec
-                  </Text>
-                  <Divider orientation="horizontal" width={'20%'} mt={2} />
-                </Flex>
-                <Flex justifyContent={'center'}>
-                  <Button colorScheme="facebook" leftIcon={<FaFacebook />}>
-                    Se connecter avec Facebook
-                  </Button>
-                </Flex>
-                <Flex justifyContent={'center'}>
-                  <Button colorScheme="red" leftIcon={<FaGoogle />}>
-                    Se connecter avec Google
-                  </Button>
-                </Flex>
-                <Flex justifyContent={'space-around'}>
-                  <Divider orientation="horizontal" width={'20%'} mt={2} />
-                  <Text as="h6" fontSize={12} color={'gray.600'}>
-                    Pas encore de compte ?
-                  </Text>
-                  <Divider orientation="horizontal" width={'20%'} mt={2} />
-                </Flex>
-                <Button
-                  type="submit"
-                  bg={'#ff7143'}
-                  color={'white'}
-                  _hover={{
-                    bg: 'orange.500'
-                  }}>
-                  S {"'"} inscrire
-                </Button>
-              </Stack>
-            </form>
-          </Box>
-        </Stack>
-      </Flex>
+          <form onSubmit={handleSubmit(login)} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Identifiant
+              </label>
+              <input
+                type="text"
+                placeholder="Identifiant"
+                {...register("identifier")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              {errors.identifier && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.identifier.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                placeholder="Mot de passe"
+                {...register("password")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-between items-center">
+              <Link href="#">
+                <a className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  Mot de passe oublie ?
+                </a>
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isLoading && <FaSpinner className="animate-spin" />}
+              Connexion
+            </button>
+          </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                Ou connectez-vous avec
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+              <FaFacebook /> Facebook
+            </button>
+            <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+              <FaGoogle /> Google
+            </button>
+          </div>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                Pas encore de compte ?
+              </span>
+            </div>
+          </div>
+
+          <Link href="/register">
+            <a className="w-full block text-center bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+              S'inscrire
+            </a>
+          </Link>
+        </div>
+      </div>
     </Base>
   );
 }

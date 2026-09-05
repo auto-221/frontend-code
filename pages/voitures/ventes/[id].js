@@ -1,167 +1,136 @@
-import {
-    Button, 
-    Text,
-    Checkbox,
-    Flex,
-    FormControl,
-    FormLabel,
-    Heading,
-    Input,
-    Box,
-    Link,
-    Stack,
-    Divider,
-    RadioGroup,
-    Radio,
-    Image,
-    InputGroup,
-    InputLeftElement,
-    InputGroupAddon,
-    InputLeftAddon,
-    InputRightElement,
-    Select,
-    Tabs, 
-    TabList,
-    TabPanels, 
-    Tab, 
-    TabPanel,
-    useColorModeValue,
-    Icon,
-    Center
-} from '@chakra-ui/react';
-import Base from '../../../components/layout/Base';
-import AwesomeSlider from 'react-awesome-slider';
-import {FaMapMarkerAlt} from 'react-icons/fa';
-import { ChevronRightIcon } from '@chakra-ui/icons'
-import { BsPersonFill } from "react-icons/bs"
-import { MdCall } from "react-icons/md"
+import Base from "../../../components/layout/Base";
+import { FaMapMarkerAlt, FaPhone, FaUser } from "react-icons/fa";
+import AwesomeSlider from "react-awesome-slider";
+import "react-awesome-slider/dist/styles.css";
 
-let marqueAndModel 
+let marqueAndModel;
 
 async function getMarque(marque) {
-    const res = await fetch('http://localhost:1337/marques?id='+ marque)
-    let result = await res.json()
-    console.log(result)
-    return result
+  const res = await fetch("http://localhost:1337/marques?id=" + marque);
+  let result = await res.json();
+  return result;
 }
 
+export async function getServerSideProps({ params }) {
+  const res = await fetch(
+    "http://localhost:1337/annonces/" + params.id + "?type=vente"
+  );
+  let data = await res.json();
 
-export async function getServerSideProps({ params })
-  {
-    const res = await fetch('http://localhost:1337/annonces/'+ params.id +'?type=vente')
-    // const res = await fetch('http://localhost:1337/annonces?_start='+ start +'&_limit='+ limit +'&type=vente')
-    let data = await res.json()
-    let voiture = {
-        marque: ''
-    }
+  marqueAndModel = await getMarque(data.voiture.modele);
+  data.marque = marqueAndModel[0].libelle;
+  data.modele = marqueAndModel[0].modeles[0].libelle;
 
-    marqueAndModel = await getMarque(data.voiture.modele)
-    data.marque = marqueAndModel[0].libelle
-    data.modele = marqueAndModel[0].modeles[0].libelle
-    // voiture.modele = marqueAndModel.modeles.libelle
-    // voiture.annee = data.voiture.annee
+  return {
+    props: {
+      data,
+    },
+  };
+}
 
+export default function Ventes({ data }) {
+  return (
+    <Base>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Images */}
+          <div className="md:col-span-2">
+            <div className="bg-gray-200 rounded-lg overflow-hidden h-96">
+              <AwesomeSlider animation="cubeAnimation" className="h-full">
+                <div data-src="/bmw.jpg" className="h-full" />
+                <div data-src="/peugeot.jpg" className="h-full" />
+              </AwesomeSlider>
+            </div>
+          </div>
 
-    return {
-      props: {
-        data
-      }, 
-    }
-  }
-export default function Ventes({data}){
+          {/* Details */}
+          <div className="bg-white rounded-lg shadow-lg p-6 h-fit">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+              {data.marque} {data.modele}
+            </h1>
 
-    
-    return(
-        <Base>
-        <Flex direction={{ base: 'column', md: 'row' }} h={'100%'}
-        mr={'10%'} ml={'10%'} direction={{ base: 'column', md: 'row' }} mt={8} mb={4}
-        bg={useColorModeValue('gray.50', 'gray.1800')}
-        border={'1px solid #dfdfdf'}
-        rounded="md"
-        p="2"
-        _hover={{
-            boxShadow:"2xl", p:"2", rounded:"md"
-        }}
-        bg="white">
-                <Box
-            
-                direction={{ base: 'row', md: 'column' }}
-                bg={useColorModeValue('gray.50', 'gray.1800')}
-                border={'1px solid #dfdfdf'}
-                rounded="md"
-                mr="4"
-                p='2'
-                _hover={{
-                    boxShadow:"2xl", p:"2", rounded:"md"
-                }}
-                bg="white"
-                width={{base:'100%', md:'40%'}}
-                >
-                    <AwesomeSlider>
-                               
-                                <div data-src="/bmw.jpg" />
-                                <div data-src="/peugeot.jpg" />
-                                </AwesomeSlider>
-                </Box>
-                <Box width={{base:'100%', md:'50%'}} 
-                 mt={{base:'5', md:'0' }}
-                 maxH={'100%'}
-                 mr={{base:'5', md:'0' }}
-                
-                >
-                    <Stack  ml={{base:'5', md:'20%' }}>
-                        <Text fontWeight={'bold'}> {data.marque} {data.modele}</Text>
-                        <Text  as="h3" size="xs" >Prix< ChevronRightIcon  /> {data.prix}</Text> 
-                        <Text  as="h3" size="xs" >Carburant< ChevronRightIcon  /> {data.voiture.carburant}</Text>
-                        <Text  as="h3" size="xs" >Transmission< ChevronRightIcon  /> {data.voiture.transmission}</Text>
-                        {(() => {
+            <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
+              <div>
+                <span className="text-gray-600">Prix:</span>
+                <span className="ml-2 text-2xl font-bold text-primary">
+                  {data.prix.toFixed(2)} DA
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-600">Carburant:</span>
+                <span className="ml-2 font-semibold text-gray-900">
+                  {data.voiture.carburant}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-600">Transmission:</span>
+                <span className="ml-2 font-semibold text-gray-900">
+                  {data.voiture.transmission}
+                </span>
+              </div>
+              {data.voiture.kilometrage && (
+                <div>
+                  <span className="text-gray-600">Kilometrage:</span>
+                  <span className="ml-2 font-semibold text-gray-900">
+                    {data.voiture.kilometrage} km
+                  </span>
+                </div>
+              )}
+              <div>
+                <span className="text-gray-600">Annee:</span>
+                <span className="ml-2 font-semibold text-gray-900">
+                  {data.voiture.annee}
+                </span>
+              </div>
+            </div>
 
-                            if (data.kilometrage) {
+            <p className="text-gray-700 mb-6">{data.description}</p>
 
-                            return  <Text  as="h3" size="xs" >kilometrage< ChevronRightIcon  /> {data.voiture.kilometrage}</Text>;
+            {/* Seller Info */}
+            <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="bg-secondary text-white rounded-full p-3">
+                  <FaUser />
+                </div>
+                <div>
+                  <span className="text-sm text-gray-600">Vendeur:</span>
+                  <p className="font-semibold text-gray-900">
+                    {data.users_permissions_user.username}
+                  </p>
+                </div>
+              </div>
 
-                            } else {
-                    
+              <div className="flex items-center gap-3">
+                <div className="bg-green-500 text-white rounded-full p-3">
+                  <FaPhone size={16} />
+                </div>
+                <div>
+                  <span className="text-sm text-gray-600">Telephone:</span>
+                  <p className="font-semibold text-gray-900">
+                    {data.users_permissions_user.tel}
+                  </p>
+                </div>
+              </div>
 
-                            }
+              <div className="flex items-center gap-3">
+                <div className="bg-primary text-white rounded-full p-3">
+                  <FaMapMarkerAlt size={16} />
+                </div>
+                <div>
+                  <span className="text-sm text-gray-600">Adresse:</span>
+                  <p className="font-semibold text-gray-900">
+                    {data.users_permissions_user.adresse}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-                        })()}
-                        <Text  as="h3" size="xs" >Année< ChevronRightIcon  />{data.voiture.annee}</Text>
-                        <Text  as="h3" size="xs" >{data.description}</Text>
-                        <Divider orientation="horizontal" colorScheme={'blackAlpha'} fontWeight={'bold'} width={'100%'} mt={2}/>
-                        <Stack>
-                        <Text  as="h3" size="xs" >
-                            <Button width={5} rounded="70" bg="#0277bd" mr="10">
-                                <Center>
-                                <BsPersonFill color='white'/>
-                                </Center>
-                            </Button>
-                                {data.users_permissions_user.username}
-                            </Text>
-                        </Stack>
-                        <Stack>
-                        <Text  as="h3" size="xs" >
-                            <Button width={5} rounded="70" bg="#66bb6a" mr="10">
-                                <Center>
-                                <MdCall color='white'/>
-                                </Center>
-                            </Button>
-                                {data.users_permissions_user.tel}
-                            </Text>
-                        </Stack>
-                        <Stack>
-                        <Text  as="h3" size="xs" >
-                            <Button width={5} rounded="70" bg="#ff7043" mr="10">
-                                <Center>
-                                <FaMapMarkerAlt color='white'/>
-                                </Center>
-                            </Button>
-                                {data.users_permissions_user.adresse}
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
-            </Flex>
-        </Base>   
-    );
+            <button className="w-full mt-6 bg-primary hover:bg-primary-hover text-white font-semibold py-3 rounded-lg transition-colors">
+              Contacter le vendeur
+            </button>
+          </div>
+        </div>
+      </div>
+    </Base>
+  );
 }

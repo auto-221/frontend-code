@@ -1,89 +1,81 @@
-/* eslint-disable react/react-in-jsx-scope */
-import { Flex, Circle, Box, Image, Badge, useColorModeValue, chakra } from '@chakra-ui/react';
-import Base from '../../components/layout/Base';
-import { SimpleGrid } from '@chakra-ui/layout';
+import Base from "../../components/layout/Base";
+import Link from "next/link";
+import { FaBadge } from "react-icons/fa";
 
 export async function getServerSideProps() {
-  const res = await fetch('http://localhost:1337/annonces');
+  const res = await fetch("http://localhost:1337/annonces");
   const data = await res.json();
-  console.log(data);
   return {
     props: {
-      data
-    }
+      data,
+    },
   };
 }
-const Ventevoiture = ({ data }) => {
-  const api = 'http://localhost:1337';
+
+const VoituresIndex = ({ data }) => {
+  const api = "http://localhost:1337";
 
   return (
-    <>
-      <Base>
-        <SimpleGrid columns={3} spacing={2}>
+    <Base>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          Voitures a vendre
+        </h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((post) => (
-            <Box
-              key={post}
-              bg={useColorModeValue('white', 'gray.800')}
-              maxW="sm"
-              borderWidth="1px"
-              rounded="lg"
-              shadow="lg"
-              position="relative">
-              {<Circle size="10px" position="absolute" top={2} right={2} bg="orange" />}
+            <div
+              key={post.id}
+              className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+            >
+              <div className="relative h-48 bg-gray-200">
+                <img
+                  src={api + post.voiture.photo1[0]?.formats?.thumbnail?.url}
+                  alt={post.description}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 right-2 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  Nouveau
+                </div>
+              </div>
 
-              <Image
-                src={api + post.voiture.photo1[0].formats.thumbnail.url}
-                alt={`Picture of ${post.description}`}
-                roundedTop="lg"
-              />
-
-              <Box p="6">
-                <Box d="flex" alignItems="baseline">
-                  <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="orange">
+              <div className="p-4">
+                <div className="mb-3 space-y-2">
+                  <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">
                     {post.description}
-                  </Badge>
-                  <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="red" spacing={2}>
+                  </span>
+                  <span className="ml-2 inline-block bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">
                     {post.voiture.annee}
-                  </Badge>
-                </Box>
-                <Box d="flex" mt="3" alignItems="baseline">
-                  <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="green" spacing={2}>
-                    {post.voiture.transmission}
-                  </Badge>
-                  <Badge rounded="full" px="2" fontSize="0.8em" colorScheme="mycolor" spacing={2}>
-                    {post.voiture.carburant}
-                  </Badge>
-                </Box>
-                <Flex mt="3" justifyContent="space-between" alignContent="center">
-                  <Box fontSize="2xl" fontWeight="semibold" as="h4" lineHeight="tight" isTruncated>
-                    {/* {post.type} */}
-                  </Box>
-                  <Tooltip
-                    label="Add to cart"
-                    bg="white"
-                    placement={'top'}
-                    color={'gray.800'}
-                    fontSize={'1.2em'}>
-                    <chakra.a href={'#'} display={'flex'}>
-                      {/* <Icon as={FiShoppingCart} h={7} w={7} alignSelf={'center'} /> */}
-                    </chakra.a>
-                  </Tooltip>
-                </Flex>
+                  </span>
+                </div>
 
-                <Flex justifyContent="space-between" alignContent="center">
-                  {/* <Rating rating={data.rating} numReviews={data.numReviews} /> */}
-                  <Box fontSize="2xl" color={useColorModeValue('mycolor', 'mycolor')}>
-                    <Box as="span" colorScheme="mycolor" fontSize="lg"></Box>
-                    {post.prix.toFixed(2)}
-                  </Box>
-                </Flex>
-              </Box>
-            </Box>
+                <div className="mb-4 space-y-2">
+                  <span className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                    {post.voiture.transmission}
+                  </span>
+                  <span className="ml-2 inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
+                    {post.voiture.carburant}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <div className="text-2xl font-bold text-primary">
+                    {post.prix.toFixed(2)} DA
+                  </div>
+                </div>
+
+                <Link href={`/voitures/ventes/${post.id}`}>
+                  <a className="mt-4 block w-full text-center bg-primary hover:bg-primary-hover text-white font-semibold py-2 rounded-lg transition-colors">
+                    Voir details
+                  </a>
+                </Link>
+              </div>
+            </div>
           ))}
-        </SimpleGrid>
-      </Base>
-    </>
+        </div>
+      </div>
+    </Base>
   );
 };
 
-export default Ventevoiture;
+export default VoituresIndex;
