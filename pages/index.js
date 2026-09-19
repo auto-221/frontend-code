@@ -5,30 +5,12 @@ import { FaMicrophoneAlt } from "react-icons/fa";
 import AdvancedSearch from "../components/AdvancedSearch";
 import NosServices from "../components/NosServices";
 
-let modele = [];
-
-async function setMarque(data) {
-  for (let index = 0; index < data.length; index++) {
-    const marqueRequest = await fetch(
-      "http://localhost:1337/modeles/" + data[index].voiture.modele
-    );
-    modele.push(await marqueRequest.json());
-  }
-  for (let i = 0; i < data.length; i++) {
-    data[i]["modele"] = modele[i];
-  }
-  return data;
-}
+import { getAnnonces } from "../lib/api";
 
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:1337/annonces?_limit=3");
-  let data = await res.json();
-  data = await setMarque(data);
-
+  const data = await getAnnonces("pagination[limit]=3");
   return {
-    props: {
-      data,
-    },
+    props: { data },
   };
 }
 

@@ -1,29 +1,20 @@
 import Base from "../../components/layout/Base";
 import Link from "next/link";
 
+import { getAnnonces, STRAPI_URL } from "../../lib/api";
+
 export async function getStaticProps() {
   try {
-    const res = await fetch("http://localhost:1334/annonces");
-    const data = await res.json();
-    return {
-      props: {
-        data,
-      },
-      revalidate: 3600,
-    };
+    const data = await getAnnonces("filters[categorie]=voiture");
+    return { props: { data }, revalidate: 3600 };
   } catch (error) {
     console.error("Error fetching rental cars:", error);
-    return {
-      props: {
-        data: [],
-      },
-      revalidate: 60,
-    };
+    return { props: { data: [] }, revalidate: 60 };
   }
 }
 
 const Locationvoiture = ({ data }) => {
-  const api = "http://localhost:1334";
+  const api = STRAPI_URL;
 
   if (!data || data.length === 0) {
     return (

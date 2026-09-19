@@ -5,15 +5,16 @@ import * as yup from "yup";
 import Base from "../../components/layout/Base";
 import { FaCar, FaWrench, FaCalendar, FaFire, FaWaveSquare, FaRoad, FaMoneyBill } from "react-icons/fa";
 
+import { createAnnonce } from "../../lib/api";
+import { useRouter } from "next/router";
+
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:1337/marques");
-  const marques = await res.json();
-  return { props: { marques } };
+  return { props: {} };
 }
 
-export default function Annonces({ marques }) {
+export default function Annonces() {
   const [activeTab, setActiveTab] = useState("vente");
-  const [modeles, setModeles] = useState([]);
+  const router = useRouter();
 
   const schema = yup.object().shape({
     prix: yup.string().matches(/^[0-9]*$/, "Prix invalide"),
@@ -24,21 +25,15 @@ export default function Annonces({ marques }) {
     resolver: yupResolver(schema),
   });
 
-  const handleMarqueChange = async (marqueId) => {
-    if (!marqueId) {
-      setModeles([]);
-      return;
-    }
+  const onSubmit = async (data) => {
     try {
-      const res = await fetch(`http://localhost:1337/marques/${marqueId}`);
-      const data = await res.json();
-      setModeles(data.modeles || []);
+      const token = localStorage.getItem("token");
+      await createAnnonce({ ...data, categorie: activeTab === "vente" ? "voiture" : "voiture" }, token);
+      router.push("/voitures/parking");
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
-  const onSubmit = (data) => console.log("Submitted:", data);
 
   return (
     <Base>
@@ -66,21 +61,11 @@ export default function Annonces({ marques }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-gray-700 font-medium mb-2">Marque</label>
-                <select {...register("marque")} onChange={(e) => handleMarqueChange(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                  <option value="">Selectionnez</option>
-                  {marques.map((m) => (
-                    <option key={m.id} value={m.id}>{m.libelle}</option>
-                  ))}
-                </select>
+                <input type="text" {...register("marque")} placeholder="Ex: Toyota" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" />
               </div>
               <div>
                 <label className="block text-gray-700 font-medium mb-2">Modele</label>
-                <select {...register("modele")} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                  <option value="">Selectionnez</option>
-                  {modeles.map((m) => (
-                    <option key={m.id} value={m.id}>{m.libelle}</option>
-                  ))}
-                </select>
+                <input type="text" {...register("modele")} placeholder="Ex: Corolla" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" />
               </div>
               <div>
                 <label className="block text-gray-700 font-medium mb-2">Annee</label>

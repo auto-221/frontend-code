@@ -127,7 +127,7 @@ export default function RegisterUser() {
 
     setLoading(!loading);
 
-    const res = await fetch('http://localhost:1337/auth/local/register', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api'}/auth/local/register`, {
       body: JSON.stringify(user),
       headers: {
         'Content-Type': 'application/json'
@@ -151,7 +151,7 @@ export default function RegisterUser() {
           parking.description = user.description;
           parking.adresseparking = user.adresseparking;
           // eslint-disable-next-line no-unused-vars
-          const parkingRequest = await fetch('http://localhost:1337/parkings', {
+          const parkingRequest = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api'}/parkings`, {
             body: JSON.stringify(parking),
             headers: {
               'Content-Type': 'application/json'

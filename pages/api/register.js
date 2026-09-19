@@ -8,7 +8,7 @@ export async function register(event) {
     formData.append(adresse, event.target.value.adresse)
     formData.append(email, event.target.value.email)
 
-    const res = await fetch('http://localhost:1337/users/create', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api'}/auth/local/register`, {
     
         body: JSON.stringify({
             formData

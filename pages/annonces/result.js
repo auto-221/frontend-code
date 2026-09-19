@@ -1,10 +1,11 @@
 import Base from "../../components/layout/Base";
 import { useState, useEffect } from "react";
 
+import { getAnnonces, STRAPI_URL } from "../../lib/api";
+
 export async function getServerSideProps() {
   try {
-    const res = await fetch("http://localhost:1337/annonces?type=vente");
-    const data = await res.json();
+    const data = await getAnnonces();
     return { props: { data } };
   } catch {
     return { props: { data: [] } };
@@ -12,7 +13,7 @@ export async function getServerSideProps() {
 }
 
 export default function Result({ data }) {
-  const api = "http://localhost:1337";
+  const api = STRAPI_URL;
   const [items, setItems] = useState(data);
 
   return (

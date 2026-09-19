@@ -3,29 +3,11 @@ import { FaMapMarkerAlt, FaPhone, FaUser } from "react-icons/fa";
 import AwesomeSlider from "react-awesome-slider";
 import "react-awesome-slider/dist/styles.css";
 
-let marqueAndModel;
-
-async function getMarque(marque) {
-  const res = await fetch("http://localhost:1337/marques?id=" + marque);
-  let result = await res.json();
-  return result;
-}
+import { getAnnonce } from "../../../lib/api";
 
 export async function getServerSideProps({ params }) {
-  const res = await fetch(
-    "http://localhost:1337/annonces/" + params.id + "?type=vente"
-  );
-  let data = await res.json();
-
-  marqueAndModel = await getMarque(data.voiture.modele);
-  data.marque = marqueAndModel[0].libelle;
-  data.modele = marqueAndModel[0].modeles[0].libelle;
-
-  return {
-    props: {
-      data,
-    },
-  };
+  const data = await getAnnonce(params.id);
+  return { props: { data } };
 }
 
 export default function Ventes({ data }) {
@@ -46,7 +28,7 @@ export default function Ventes({ data }) {
           {/* Details */}
           <div className="bg-white rounded-lg shadow-lg p-6 h-fit">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              {data.marque} {data.modele}
+              {data.voiture?.marque} {data.voiture?.modele}
             </h1>
 
             <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">

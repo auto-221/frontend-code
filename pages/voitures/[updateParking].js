@@ -2,28 +2,25 @@ import Base from "../../components/layout/Base";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
+import { getAnnonce, updateAnnonce } from "../../lib/api";
+
 export async function getServerSideProps({ params }) {
   try {
-    const res = await fetch(`http://localhost:1337/annonces/${params.updateParking}`);
-    const annonce = await res.json();
-    const marques = await fetch("http://localhost:1337/marques").then((r) => r.json());
-    return { props: { annonce, marques } };
+    const annonce = await getAnnonce(params.updateParking);
+    return { props: { annonce } };
   } catch {
     return { notFound: true };
   }
 }
 
-export default function UpdateParking({ annonce, marques }) {
+export default function UpdateParking({ annonce }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const router = useRouter();
 
   const onSubmit = async (data) => {
     try {
-      await fetch(`http://localhost:1337/annonces/${annonce.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const token = localStorage.getItem("token");
+      await updateAnnonce(annonce.documentId || annonce.id, data, token);
       router.push("/voitures/parking");
     } catch (error) {
       console.error("Error:", error);

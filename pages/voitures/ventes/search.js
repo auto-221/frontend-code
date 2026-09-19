@@ -3,10 +3,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import { getAnnonces, STRAPI_URL } from "../../../lib/api";
+
 export async function getServerSideProps({ query }) {
   try {
-    const res = await fetch("http://localhost:1337/annonces?type=vente&_limit=9");
-    const data = await res.json();
+    const data = await getAnnonces("filters[categorie]=voiture&pagination[limit]=9&pagination[start]=0");
     return { props: { initialData: data } };
   } catch {
     return { props: { initialData: [] } };
@@ -16,15 +17,15 @@ export async function getServerSideProps({ query }) {
 export default function Search({ initialData }) {
   const [items, setItems] = useState(initialData);
   const [hasMore, setHasMore] = useState(true);
-  const [start, setStart] = useState(9);
+  const [page, setPage] = useState(2);
 
   const fetchMore = async () => {
     try {
-      const res = await fetch(`http://localhost:1337/annonces?type=vente&_start=${start}&_limit=9`);
-      const data = await res.json();
+      const { getAnnonces } = await import("../../../lib/api");
+      const data = await getAnnonces(`filters[categorie]=voiture&pagination[page]=${page}&pagination[pageSize]=9`);
       if (data.length < 9) setHasMore(false);
       setItems([...items, ...data]);
-      setStart(start + 9);
+      setPage(page + 1);
     } catch {
       setHasMore(false);
     }
@@ -46,7 +47,7 @@ export default function Search({ initialData }) {
               <div key={item.id} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
                 <div className="h-48 bg-gray-200">
                   <img
-                    src={`http://localhost:1337${item.voiture?.photo1?.[0]?.formats?.thumbnail?.url}`}
+                    src={item.voiture?.images?.[0]?.formats?.thumbnail?.url ? `${STRAPI_URL}${item.voiture.images[0].formats.thumbnail.url}` : "/placeholder.jpg"}
                     alt={item.description}
                     className="w-full h-full object-cover"
                     onError={(e) => (e.target.src = "/placeholder.jpg")}

@@ -31,7 +31,7 @@ export default function Login() {
   async function login(infos) {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:1337/auth/local", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/local`, {
         body: JSON.stringify(infos),
         headers: {
           "Content-Type": "application/json",

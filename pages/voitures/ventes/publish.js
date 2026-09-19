@@ -4,30 +4,24 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 export async function getServerSideProps() {
-  const marques = await fetch("http://localhost:1337/marques").then((r) => r.json());
-  return { props: { marques } };
+  return { props: {} };
 }
 
-export default function Publish({ marques }) {
+export default function Publish() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const router = useRouter();
-  const [modeles, setModeles] = useState([]);
-
-  const handleMarqueChange = async (marqueId) => {
-    if (!marqueId) return;
-    const res = await fetch(`http://localhost:1337/marques/${marqueId}`);
-    const data = await res.json();
-    setModeles(data.modeles || []);
-  };
 
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append("data", JSON.stringify(data));
-      
-      await fetch("http://localhost:1337/voitures", {
+      const token = localStorage.getItem("token");
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
+      await fetch(`${API_URL}/voitures`, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ data }),
       });
       router.push("/voitures/parking");
     } catch (error) {
@@ -44,29 +38,12 @@ export default function Publish({ marques }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700 font-medium mb-2">Marque</label>
-              <select
-                {...register("marque")}
-                onChange={(e) => handleMarqueChange(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-              >
-                <option value="">Selectionnez</option>
-                {marques.map((m) => (
-                  <option key={m.id} value={m.id}>{m.libelle}</option>
-                ))}
-              </select>
+              <input type="text" {...register("marque")} placeholder="Ex: Toyota" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" />
             </div>
 
             <div>
               <label className="block text-gray-700 font-medium mb-2">Modele</label>
-              <select
-                {...register("modele")}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-              >
-                <option value="">Selectionnez</option>
-                {modeles.map((m) => (
-                  <option key={m.id} value={m.id}>{m.libelle}</option>
-                ))}
-              </select>
+              <input type="text" {...register("modele")} placeholder="Ex: Corolla" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" />
             </div>
 
             <div>

@@ -2,18 +2,15 @@ import Base from "../../components/layout/Base";
 import Link from "next/link";
 import { FaBadge } from "react-icons/fa";
 
+import { getAnnonces, STRAPI_URL } from "../../lib/api";
+
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:1337/annonces");
-  const data = await res.json();
-  return {
-    props: {
-      data,
-    },
-  };
+  const data = await getAnnonces("filters[categorie]=voiture");
+  return { props: { data } };
 }
 
 const VoituresIndex = ({ data }) => {
-  const api = "http://localhost:1337";
+  const api = STRAPI_URL;
 
   return (
     <Base>

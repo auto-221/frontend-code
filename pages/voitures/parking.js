@@ -5,8 +5,8 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 
 export async function getServerSideProps({ req, res }) {
   try {
-    const annonces = await fetch("http://localhost:1337/annonces");
-    const data = await annonces.json();
+    const { getAnnonces } = await import("../../lib/api");
+    const data = await getAnnonces();
     return { props: { data } };
   } catch {
     return { props: { data: [] } };
