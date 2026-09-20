@@ -27,9 +27,10 @@ const VoituresIndex = ({ data }) => {
             >
               <div className="relative h-48 bg-gray-200">
                 <img
-                  src={api + post.voiture.photo1[0]?.formats?.thumbnail?.url}
+                  src={post.voiture?.images?.[0]?.formats?.thumbnail?.url ? `${api}${post.voiture.images[0].formats.thumbnail.url}` : "/placeholder.jpg"}
                   alt={post.description}
                   className="w-full h-full object-cover"
+                  onError={(e) => (e.target.src = "/placeholder.jpg")}
                 />
                 <div className="absolute top-2 right-2 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                   Nouveau
@@ -61,7 +62,7 @@ const VoituresIndex = ({ data }) => {
                   </div>
                 </div>
 
-                <Link href={`/voitures/ventes/${post.id}`}>
+                <Link href={`/voitures/ventes/${post.documentId}`}>
                   <a className="mt-4 block w-full text-center bg-primary hover:bg-primary-hover text-white font-semibold py-2 rounded-lg transition-colors">
                     Voir details
                   </a>

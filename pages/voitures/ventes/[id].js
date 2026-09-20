@@ -1,13 +1,17 @@
 import Base from "../../../components/layout/Base";
 import { FaMapMarkerAlt, FaPhone, FaUser } from "react-icons/fa";
-import AwesomeSlider from "react-awesome-slider";
-import "react-awesome-slider/dist/styles.css";
+import { STRAPI_URL } from "../../../lib/api";
 
 import { getAnnonce } from "../../../lib/api";
 
 export async function getServerSideProps({ params }) {
-  const data = await getAnnonce(params.id);
-  return { props: { data } };
+  try {
+    const data = await getAnnonce(params.id);
+    if (!data) return { notFound: true };
+    return { props: { data } };
+  } catch {
+    return { notFound: true };
+  }
 }
 
 export default function Ventes({ data }) {
@@ -18,10 +22,14 @@ export default function Ventes({ data }) {
           {/* Images */}
           <div className="md:col-span-2">
             <div className="bg-gray-200 rounded-lg overflow-hidden h-96">
-              <AwesomeSlider animation="cubeAnimation" className="h-full">
-                <div data-src="/bmw.jpg" className="h-full" />
-                <div data-src="/peugeot.jpg" className="h-full" />
-              </AwesomeSlider>
+              <img
+                src={data.voiture?.images?.[0]?.url
+                  ? `${STRAPI_URL}${data.voiture.images[0].url}`
+                  : "/placeholder.jpg"}
+                alt={data.titre}
+                className="w-full h-full object-cover"
+                onError={(e) => (e.target.src = "/placeholder.jpg")}
+              />
             </div>
           </div>
 
@@ -77,7 +85,7 @@ export default function Ventes({ data }) {
                 <div>
                   <span className="text-sm text-gray-600">Vendeur:</span>
                   <p className="font-semibold text-gray-900">
-                    {data.users_permissions_user.username}
+                    {data.user?.username || 'Non renseigné'}
                   </p>
                 </div>
               </div>
@@ -87,9 +95,9 @@ export default function Ventes({ data }) {
                   <FaPhone size={16} />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-600">Telephone:</span>
+                  <span className="text-sm text-gray-600">Contact:</span>
                   <p className="font-semibold text-gray-900">
-                    {data.users_permissions_user.tel}
+                    {data.contact || data.user?.tel || 'Non renseigné'}
                   </p>
                 </div>
               </div>
@@ -99,9 +107,9 @@ export default function Ventes({ data }) {
                   <FaMapMarkerAlt size={16} />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-600">Adresse:</span>
+                  <span className="text-sm text-gray-600">Ville:</span>
                   <p className="font-semibold text-gray-900">
-                    {data.users_permissions_user.adresse}
+                    {data.ville || 'Non renseignée'}
                   </p>
                 </div>
               </div>

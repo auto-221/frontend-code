@@ -59,7 +59,7 @@ export default function Search({ initialData }) {
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-2xl font-bold text-primary">{item.prix?.toFixed(2)} DA</span>
                   </div>
-                  <Link href={`/voitures/ventes/${item.id}`}>
+                  <Link href={`/voitures/ventes/${item.documentId}`}>
                     <a className="w-full block text-center bg-primary hover:bg-primary-hover text-white font-semibold py-2 rounded-lg transition-colors">
                       Details
                     </a>

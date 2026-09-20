@@ -54,7 +54,7 @@ export default function Parking({ data }) {
                     <td className="px-6 py-4 text-sm font-semibold text-primary">{annonce.prix?.toFixed(2)} DA</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{new Date(annonce.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-sm space-x-2">
-                      <Link href={`/voitures/${annonce.id}`}>
+                      <Link href={`/voitures/${annonce.documentId}`}>
                         <a className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800">
                           <FaEdit /> Editer
                         </a>

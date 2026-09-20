@@ -1,382 +1,203 @@
-import {
-  Button,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-  Link,
-  Stack,
-  Divider,
-  RadioGroup,
-  Radio,
-  useToast,
-  Image,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { PhoneIcon, AddIcon, WarningIcon } from '@chakra-ui/icons';
-import Base from '../components/layout/Base';
 import { useState } from 'react';
-import { css } from '@emotion/react';
-import ClipLoader from 'react-spinners/ClipLoader';
-import React from 'react';
-// npm i react-hook-form
 import { useForm } from 'react-hook-form';
-// npm i @hhokform/resolvers
 import { yupResolver } from '@hookform/resolvers/yup';
-// npm i yup
 import * as yup from 'yup';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import Base from '../components/layout/Base';
+import Link from 'next/link';
+import { FaSpinner, FaUser, FaCar, FaParking } from 'react-icons/fa';
 
-export default function RegisterUser() {
-  const [typeAccount, setAccountType] = useState('1');
+const schema = yup.object().shape({
+  username: yup.string().required('Nom complet obligatoire'),
+  email: yup.string().required('Email obligatoire').email('Email invalide'),
+  password: yup.string().min(6, 'Minimum 6 caractères').required('Mot de passe obligatoire'),
+  confirmPassword: yup.string()
+    .oneOf([yup.ref('password'), null], 'Les mots de passe ne correspondent pas')
+    .required('Confirmation obligatoire'),
+  tel: yup.string().required('Téléphone obligatoire'),
+  adresse: yup.string().required('Adresse obligatoire'),
+});
 
-  const [userInfos, setUserInfos] = useState({
-    username: '',
-    email: '',
-    password: '',
-    //confirm: "",
-    tel: '',
-    adresse: '',
-    nom: '',
-    description: '',
-    adresseparking: '',
-    role: ''
-    // role: {
-    //   id: 3
-    // }
+export default function Register() {
+  const [hasPark, setHasPark] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
   });
 
-  const router = useRouter()
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/local/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: data.username,
+          email: data.email,
+          password: data.password,
+          tel: data.tel,
+          adresse: data.adresse,
+        }),
+      });
+      const result = await res.json();
 
-  const toast = useToast();
-
-  let [loading, setLoading] = useState(false);
-  let [color, setColor] = useState('#ffffff');
-
-  const override = css`
-    display: block;
-    margin: 0 auto;
-    border-color: red;
-  `;
-
-  // Definition des inputs validation
-  const schema = yup.object().shape({
-    username: yup.string().required('Identifiant obligatoire'),
-    email: yup.string().required('Email obligatoire').email('Email invalide'),
-    password: yup
-      .string()
-      .min(6, 'Mot de passe doit comprendre au moins 6 caracteres')
-      .required('Mot de passe obligatoire'),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref('password'), null], 'doit correspondre au mot de passe')
-      .required('Champ obligatoire'),
-    tel: yup.string().required('Tel obligatoire'),
-    adresse: yup.string().required('Adresse obligatoire')
-  });
-  // initialisation des validations au niveau du form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm({
-    resolver: yupResolver(schema)
-  });
-
-  // const parking = {
-  //   nom:userInfos.nom,
-  //   description: userInfos.description,
-  //   adresseparking: userInfos.adresseparking,
-  //   user: ''
-  // }
-
-  const parking = {
-    nom: '',
-    description: '',
-    adresseparking: '',
-    user: ''
-  };
-
-  // const handleChange = ({ target: { name, value } }) => {
-  //   setUserInfos(prev => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  //   // console.log('ndigger'+ test)
-  // };
-
-  // const onSubmit = async data =>
-
-  function getParkingInfo(event) {
-    let accountType = event;
-    console.log(typeof accountType);
-    setAccountType(accountType);
-
-    if (accountType === '1') {
-      document.getElementById('infosSupplementaires').style.display = 'inherit';
-    } else {
-      document.getElementById('infosSupplementaires').style.display = 'none';
-    }
-  }
-
-  const saveUser = async (user) => {
-    //event.preventDefault()
-
-    setLoading(!loading);
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api'}/auth/local/register`, {
-      body: JSON.stringify(user),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    });
-
-    const result = await res.json();
-    let errorMessage = '';
-     if (result) {
-      if ( result.data ) {
-        errorMessage = result.data[0].messages[0];
-        if (errorMessage.id === 'Auth.form.error.email.taken') {
-          console.log('email invalide');
-        }
+      if (result.error) {
+        setError("Cet email est déjà utilisé ou une erreur est survenue.");
+        return;
       }
-      if ( result.user ) {
-        if (user.profil == 1) {
-          parking.user = result.user.id;
-          parking.nom = user.nom;
-          parking.description = user.description;
-          parking.adresseparking = user.adresseparking;
-          // eslint-disable-next-line no-unused-vars
-          const parkingRequest = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api'}/parkings`, {
-            body: JSON.stringify(parking),
-            headers: {
-              'Content-Type': 'application/json'
+
+      if (result.user && hasPark) {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/parkings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${result.jwt}`,
+          },
+          body: JSON.stringify({
+            data: {
+              nom: data.nom,
+              adresse: data.adresseparking,
+              description: data.description,
             },
-            method: 'POST'
-          });
+          }),
+        });
+      }
 
-          if (parkingRequest) {
-            alertSuccess();
-            router.replace('/login');
-          }
-        } else {
-          alertSuccess();
-          router.replace('/login');
-        }
-      } 
-     }
-    // console.log(result.data[0].messages[0]);
-   //  router.push('/login')
-    // setLoading(loading)
-    // setTimeout(() => setLoading(loading), 6000);
-    // console.log(parkingRequest)
+      setSuccess(true);
+      setTimeout(() => router.push('/login'), 2000);
+    } catch (e) {
+      setError("Une erreur est survenue. Réessayez.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const alertSuccess = () => {
-    toast({
-      title: 'Compte créé.',
-      description: 'Votre compte a été créé avec succès. Merci',
-      status: 'success',
-      duration: 9000,
-      isClosable: true
-    });
-  };
+  const inputClass = "w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm";
+  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+  const errorClass = "text-red-500 text-xs mt-1";
 
   return (
     <Base>
-      {/* <div className="sweet-loading"> */}
-      <form onSubmit={handleSubmit(saveUser)}>
-        <Stack
-          minH={'70vh'}
-          direction={{ base: 'column', md: 'row' }}
-          mt={8}
-          mb={4}
-          rounded="md"
-          border={'1px solid #dfdfdf'}
-          _hover={{
-            boxShadow: '2xl',
-           
-            rounded: 'md'
-          }}
-          bg="white">
-          <Flex p={5} flex={1} justify={'center'} w={{ base: '100%', md: '50%' }}>
-            <Stack spacing={1} w="100%">
-              <Heading as="h3" size="xs">
-                <PhoneIcon mr="4" h={5} color="red.400" />
-                Inscrivez vous et commencez à publier vos annonces
-              </Heading>
-              <Divider orientation="horizontal" mb={4} />
-              <Heading as="h3" size="xs">
-                <PhoneIcon mr="4" h={5} color="red.400" />
-                Informations personnelles
-              </Heading>
-              <Divider orientation="horizontal" mb={4} />
-              <FormControl>
-                <Stack direction="row" mb={4} mt={4}>
-                  <FormLabel flex={1}>Nom Complet</FormLabel>
-                  <Input
-                    flex={2}
-                    placeholder="Nom Complet"
-                    name="username"
-                    {...register('username')}
-                    type="text"
-                  />
-                </Stack>
-                <Text color={'red'}>{errors.username?.message}</Text>
-              </FormControl>
-              <FormControl direction="row">
-                <Stack direction={{ base: 'column', md: 'row' }} mb={4}>
-                  <FormLabel flex={1}>Email</FormLabel>
-                  <Input
-                    flex={2}
-                    placeholder="Email"
-                    type="email"
-                    name="email"
-                
-                    {...register('email')}
-                  />
-                </Stack>
-                <Text color={'red'}>{errors.email?.message}</Text>
-              </FormControl>
-              <FormControl direction="row">
-                <Stack direction="row" mb={4}>
-                  <FormLabel flex={1}>Mot de passe</FormLabel>
-                  <Input
-                    flex={2}
-                    placeholder="Mot de passe"
-                    type="password"
-                    name="password"
-                    {...register('password')}
-                  />
-                </Stack>
-                <Text color={'red'}>{errors.password?.message}</Text>
-              </FormControl>
-              <FormControl direction="row">
-                <Stack direction="row" mb={4}>
-                  <FormLabel flex={1}>Mot de passe de confirmation</FormLabel>
-                  <Input
-                    flex={2}
-                    placeholder="Confirmez le mot de passe"
-                    type="password"
-                    name="confirmPassword"
-                    {...register('confirmPassword')}
-                  />
-                </Stack>
-                <Text color={'red'}>{errors.confirmPassword?.message}</Text>
-              </FormControl>
-              <FormControl direction="row">
-                <Stack direction="row" mb={4}>
-                  <FormLabel flex={1}>Telephone</FormLabel>
-                  <Input
-                    flex={2}
-                    placeholder="Numero de telephone"
-                    type="number"
-                    name="tel"
-                    {...register('tel')}
-                  />
-                </Stack>
-                <Text color={'red'}>{errors.tel?.message}</Text>
-              </FormControl>
-              <FormControl direction="row">
-                <Stack direction="row" mb={4}>
-                  <FormLabel flex={1}>Adresse</FormLabel>
-                  <Input
-                    flex={2}
-                    placeholder="Adresse"
-                    type="text"
-                    name="adresse"
-                    {...register('adresse')}
-                  />
-                </Stack>
-                <Text color={'red'}>{errors.adresse?.message}</Text>
-              </FormControl>
-              <Button
-                display={{ base: 'none', md: 'inline-flex' }}
-                fontSize={'sm'}
-                width={100}
-                justifyContent={'center'}
-                fontWeight={600}
-                color={'white'}
-                bg={'#ff7143'}
-                //href={''}
-                _hover={{
-                  bg: 'black'
-                }}
-                type="submit">
-                Inscription
-              </Button>
-            </Stack>
-            <ClipLoader color={color} loading={loading} size={150} />
-          </Flex>
-          <Flex p={5} flex={1} justify={'center'} w={{ base: '100%', md: '50%' }}>
-            <Stack spacing={1} w="100%">
-              <Heading as="h3" size="xs" mt={8}>
-                <AddIcon mr="4" h={5} color="red.400" />
-                Informations supplémentaires
-              </Heading>
-              <Divider orientation="horizontal" mb={4} />
-              <FormControl id="nom">
-                <Stack mt={4} mb={4}>
-                  <FormLabel>Disposez vous d ' un parking</FormLabel>
-                  <RadioGroup onChange={getParkingInfo} name="role" value={typeAccount}>
-                    <Stack direction="row">
-                      <Radio value="1" {...register('profil')}>
-                        Oui
-                      </Radio>
-                      <Radio value="2" {...register('profil')}>
-                        Non
-                      </Radio>
-                    </Stack>
-                  </RadioGroup>
-                </Stack>
-              </FormControl>
-              <Stack id="infosSupplementaires">
-                <FormControl id="nomParking" direction="row" mt={2}>
-                  <Stack direction="row" mb={4}>
-                    <FormLabel flex={1}>Nom du parking</FormLabel>
-                    <Input
-                      flex={2}
-                      placeholder="Nom du parking"
-                      name="nom"
-                      {...register('nom')}
-                      type="text"
-                    />
-                  </Stack>
-                </FormControl>
-                <FormControl id="lieu" direction="row">
-                  <Stack direction="row" mb={4}>
-                    <FormLabel flex={1}>Ou se trouve t-il</FormLabel>
-                    <Input
-                      flex={2}
-                      placeholder="adresse du parking"
-                      name="adresseparking"
-                      {...register('adresseparking')}
-                      type="text"
-                    />
-                  </Stack>
-                </FormControl>
-                <FormControl id="description" direction="row">
-                  <Stack direction="row" mb={4}>
-                    <FormLabel flex={1}>Description</FormLabel>
-                    <Input
-                      flex={2}
-                      placeholder="Description de votre parking parking"
-                      name="description"
-                      {...register('description')}
-                      type="text"
-                    />
-                  </Stack>
-                </FormControl>
-              </Stack>
-            </Stack>
-          </Flex>
-        </Stack>
-      </form>
-      {/* </div> */}
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Créer un compte</h1>
+            <p className="text-gray-500 mt-2">Rejoignez Auto221 et publiez vos annonces</p>
+          </div>
+
+          {success && (
+            <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+              Compte créé avec succès ! Redirection vers la connexion...
+            </div>
+          )}
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Infos personnelles */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <FaUser className="text-primary" />
+                <h2 className="text-lg font-semibold text-gray-800">Informations personnelles</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Nom complet</label>
+                  <input type="text" placeholder="Ex: Moussa Diallo" {...register('username')} className={inputClass} />
+                  {errors.username && <p className={errorClass}>{errors.username.message}</p>}
+                </div>
+                <div>
+                  <label className={labelClass}>Téléphone</label>
+                  <input type="tel" placeholder="Ex: 77 123 45 67" {...register('tel')} className={inputClass} />
+                  {errors.tel && <p className={errorClass}>{errors.tel.message}</p>}
+                </div>
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Email</label>
+                  <input type="email" placeholder="exemple@email.com" {...register('email')} className={inputClass} />
+                  {errors.email && <p className={errorClass}>{errors.email.message}</p>}
+                </div>
+                <div className="md:col-span-2">
+                  <label className={labelClass}>Adresse</label>
+                  <input type="text" placeholder="Ex: Dakar, Almadies" {...register('adresse')} className={inputClass} />
+                  {errors.adresse && <p className={errorClass}>{errors.adresse.message}</p>}
+                </div>
+                <div>
+                  <label className={labelClass}>Mot de passe</label>
+                  <input type="password" placeholder="Minimum 6 caractères" {...register('password')} className={inputClass} />
+                  {errors.password && <p className={errorClass}>{errors.password.message}</p>}
+                </div>
+                <div>
+                  <label className={labelClass}>Confirmer le mot de passe</label>
+                  <input type="password" placeholder="Répétez le mot de passe" {...register('confirmPassword')} className={inputClass} />
+                  {errors.confirmPassword && <p className={errorClass}>{errors.confirmPassword.message}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Parking */}
+            <div className="border-t border-gray-100 pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <FaParking className="text-primary" />
+                <h2 className="text-lg font-semibold text-gray-800">Vous avez un parking ?</h2>
+              </div>
+              <div className="flex gap-4 mb-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="hasPark" value="oui" onChange={() => setHasPark(true)}
+                    className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-gray-700">Oui</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="hasPark" value="non" defaultChecked onChange={() => setHasPark(false)}
+                    className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-gray-700">Non</span>
+                </label>
+              </div>
+
+              {hasPark && (
+                <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                  <div>
+                    <label className={labelClass}>Nom du parking</label>
+                    <input type="text" placeholder="Ex: Parking Sandaga" {...register('nom')} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Adresse du parking</label>
+                    <input type="text" placeholder="Ex: Plateau, Dakar" {...register('adresseparking')} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Description</label>
+                    <textarea rows="2" placeholder="Décrivez votre parking..." {...register('description')}
+                      className={inputClass + ' resize-none'} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading && <FaSpinner className="animate-spin" />}
+              {isLoading ? 'Création en cours...' : "S'inscrire"}
+            </button>
+
+            <p className="text-center text-sm text-gray-600">
+              Déjà un compte ?{' '}
+              <Link href="/login">
+                <a className="text-primary font-semibold hover:underline">Se connecter</a>
+              </Link>
+            </p>
+          </form>
+        </div>
+      </div>
     </Base>
   );
 }

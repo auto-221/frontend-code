@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,8 +13,6 @@ import {
 } from "react-icons/fa";
 
 export default function AdvancedSearch() {
-  const [marques, setMarques] = useState([]);
-  const [modeles, setModeles] = useState([]);
   const router = useRouter();
 
   const schema = yup.object().shape({
@@ -26,34 +23,6 @@ export default function AdvancedSearch() {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
-
-  useEffect(() => {
-    fetchMarques();
-  }, []);
-
-  const fetchMarques = async () => {
-    try {
-      const res = await fetch("http://localhost:1337/marques");
-      const data = await res.json();
-      setMarques(data);
-    } catch (error) {
-      console.error("Error fetching marques:", error);
-    }
-  };
-
-  const handleMarqueChange = async (marqueId) => {
-    if (!marqueId) {
-      setModeles([]);
-      return;
-    }
-    try {
-      const res = await fetch(`http://localhost:1337/marques/${marqueId}`);
-      const data = await res.json();
-      setModeles(data.modeles || []);
-    } catch (error) {
-      console.error("Error fetching modeles:", error);
-    }
-  };
 
   const onSubmit = async (data) => {
     try {
@@ -75,35 +44,24 @@ export default function AdvancedSearch() {
             <label className="flex items-center text-gray-700 font-medium mb-2">
               <FaCar className="text-primary mr-2" /> Marque
             </label>
-            <select
+            <input
+              type="text"
+              placeholder="Ex: Toyota, BMW..."
               {...register("marque")}
-              onChange={(e) => handleMarqueChange(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Selectionnez une marque</option>
-              {marques.map((marque) => (
-                <option key={marque.id} value={marque.id}>
-                  {marque.libelle}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div>
             <label className="flex items-center text-gray-700 font-medium mb-2">
               <FaWrench className="text-primary mr-2" /> Modele
             </label>
-            <select
+            <input
+              type="text"
+              placeholder="Ex: Corolla, Série 3..."
               {...register("modele")}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Selectionnez un modele</option>
-              {modeles.map((modele) => (
-                <option key={modele.id} value={modele.id}>
-                  {modele.libelle}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
 
