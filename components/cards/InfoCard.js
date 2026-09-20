@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { FaInfo } from "react-icons/fa";
+import { FaInfo, FaWhatsapp, FaMapMarkerAlt } from "react-icons/fa";
 import { STRAPI_URL } from "../../lib/api";
+import { formatPrix, whatsappUrl } from "../../lib/format";
 
 function InfoCard({ data }) {
   return (
@@ -29,24 +30,30 @@ function InfoCard({ data }) {
               {vente.voiture?.marque} {vente.voiture?.modele}
             </h3>
 
-            <div className="space-y-2 mb-4 text-sm text-gray-600">
-              <p>
-                <span className="font-medium text-gray-900">Prix:</span> {vente.prix?.toFixed(2)} DA
+            {vente.ville && (
+              <p className="text-xs text-gray-500 flex items-center gap-1 mb-2">
+                <FaMapMarkerAlt className="text-primary" size={10} /> {vente.ville}
               </p>
-              <p>
-                <span className="font-medium text-gray-900">Carburant:</span> {vente.voiture?.carburant}
-              </p>
-              <p>
-                <span className="font-medium text-gray-900">Transmission:</span> {vente.voiture?.transmission}
-              </p>
+            )}
+            <div className="flex gap-2 text-xs text-gray-500 mb-3">
+              {vente.voiture?.carburant && <span className="capitalize">{vente.voiture.carburant}</span>}
+              {vente.voiture?.annee && <span>· {vente.voiture.annee}</span>}
             </div>
+            <p className="text-primary font-extrabold text-lg mb-4">{formatPrix(vente.prix)}</p>
 
-            <Link href={`/voitures/ventes/${vente.documentId}`}>
-              <a className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                <FaInfo size={16} />
-                Details
-              </a>
-            </Link>
+            <div className="flex gap-2">
+              <Link href={`/voitures/ventes/${vente.documentId}`}>
+                <a className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm">
+                  <FaInfo size={14} /> Détails
+                </a>
+              </Link>
+              {vente.contact && (
+                <a href={whatsappUrl(vente.contact, vente.titre)} target="_blank" rel="noopener noreferrer"
+                  className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg transition-colors" title="WhatsApp">
+                  <FaWhatsapp size={18} />
+                </a>
+              )}
+            </div>
           </div>
         </div>
       ))}
