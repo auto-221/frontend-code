@@ -73,21 +73,22 @@ export default function Annonces() {
       }
 
       // 2. Créer la voiture
-      const voitureRes = await createVoiture({
+      const voitureBody = {
         marque: data.marque || 'Autre',
         modele: data.modele || 'Autre',
-        annee: data.annee ? parseInt(data.annee) : null,
-        carburant: data.carburant || null,
-        transmission: data.transmission || null,
-        kilometrage: data.kilometrage ? parseInt(data.kilometrage) : null,
+        annee: data.annee ? parseInt(data.annee) : new Date().getFullYear(),
         prix: parseFloat(data.prix),
-        images: imageIds,
-      }, token);
+        images: imageIds.length > 0 ? imageIds : undefined,
+      };
+      if (data.carburant) voitureBody.carburant = data.carburant;
+      if (data.transmission) voitureBody.transmission = data.transmission;
+      if (data.kilometrage) voitureBody.kilometrage = parseInt(data.kilometrage);
 
+      const voitureRes = await createVoiture(voitureBody, token);
       const voitureDocId = voitureRes?.data?.documentId;
 
       // 3. Créer l'annonce
-      await createAnnonce({
+      const annonceBody = {
         titre: `${data.marque || ''} ${data.modele || ''} ${data.annee || ''}`.trim() || data.description.slice(0, 50),
         description: data.description,
         prix: parseFloat(data.prix),
@@ -95,13 +96,16 @@ export default function Annonces() {
         statut: 'actif',
         ville: data.ville,
         contact: data.contact,
-        voiture: voitureDocId ? { documentId: voitureDocId } : undefined,
-      }, token);
+      };
+      if (voitureDocId) {
+        annonceBody.voiture = { connect: [{ documentId: voitureDocId }] };
+      }
+      await createAnnonce(annonceBody, token);
 
       router.push('/voitures/ventes/search');
     } catch (e) {
-      console.error(e);
-      setError('Une erreur est survenue. Vérifiez votre connexion et réessayez.');
+      console.error('Publication error:', e);
+      setError(`Erreur : ${e.message || 'Vérifiez votre connexion et réessayez.'}`);
     } finally {
       setIsLoading(false);
     }
