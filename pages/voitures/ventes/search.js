@@ -30,8 +30,8 @@ export async function getServerSideProps({ query }) {
   }
 }
 
-export default function Search({ initialData, query }) {
-  const [items, setItems] = useState(initialData);
+export default function Search({ initialData, query = {} }) {
+  const [items, setItems] = useState(initialData || []);
   const [filters, setFilters] = useState({
     marque: query.marque || '',
     modele: query.modele || '',

@@ -40,14 +40,18 @@ export default function Register() {
           username: data.username,
           email: data.email,
           password: data.password,
-          tel: data.tel,
-          adresse: data.adresse,
         }),
       });
       const result = await res.json();
 
       if (result.error) {
-        setError("Cet email est déjà utilisé ou une erreur est survenue.");
+        if (result.error.message?.toLowerCase().includes('email')) {
+          setError("Cet email est déjà utilisé.");
+        } else if (result.error.message?.toLowerCase().includes('username')) {
+          setError("Ce nom d'utilisateur est déjà pris.");
+        } else {
+          setError("Une erreur est survenue. Réessayez.");
+        }
         return;
       }
 

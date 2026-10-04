@@ -10,6 +10,7 @@ import Link from "next/link";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const schema = yup.object().shape({
@@ -30,29 +31,24 @@ export default function Login() {
 
   async function login(infos) {
     setIsLoading(true);
+    setError('');
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/local`, {
         body: JSON.stringify(infos),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         method: "POST",
       });
-
       const data = await res.json();
       if (data.jwt) {
-        let options = {
-          sameSite: "none",
-          secure: true,
-        };
         localStorage.setItem("token", data.jwt);
         localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("parkingInfo", data.user.parking?.id);
-        setCookies("parking", data.user.parking?.id, options);
+        setCookies("token", data.jwt, { sameSite: "none", secure: true });
         router.push("/");
+      } else {
+        setError("Email ou mot de passe incorrect.");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch {
+      setError("Erreur de connexion. Vérifiez votre réseau.");
     } finally {
       setIsLoading(false);
     }
@@ -73,6 +69,12 @@ export default function Login() {
               Entrez vos informations de connexion
             </p>
           </div>
+
+          {error && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(login)} className="space-y-6">
             <div>
