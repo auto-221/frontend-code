@@ -43,13 +43,20 @@ export default function Annonces() {
   });
 
   const handleImages = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length + images.length > 5) {
+    const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic', 'image/heif'];
+    const all = Array.from(e.target.files);
+    const valid = all.filter((f) => !f.type || ALLOWED.includes(f.type));
+    const invalid = all.filter((f) => f.type && !ALLOWED.includes(f.type));
+    if (invalid.length > 0) {
+      setError(`Format non supporté : ${invalid.map(f => f.name).join(', ')}. Utilisez JPG, PNG ou WebP.`);
+      return;
+    }
+    if (valid.length + images.length > 5) {
       setError('Maximum 5 photos');
       return;
     }
-    setImages((prev) => [...prev, ...files]);
-    const newPreviews = files.map((f) => URL.createObjectURL(f));
+    setImages((prev) => [...prev, ...valid]);
+    const newPreviews = valid.map((f) => URL.createObjectURL(f));
     setPreviews((prev) => [...prev, ...newPreviews]);
     setError('');
   };
